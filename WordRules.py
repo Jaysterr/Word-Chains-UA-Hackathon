@@ -58,11 +58,37 @@ class WordRules:
         return False
     
     def check_word_len(self, letters: list[str]) -> bool:
+        '''
+        This function takes the letters input by the user and checks that they
+        are a valid length. This function does not check if the word is valid.
+        
+        Parameters: letters is a list of strings which will all be single 
+        characters. 
+
+        Returns: True if the length is equal to the expected length and False 
+        otherwise. 
+        '''
         return len(letters) == self._SIZE
 
+<<<<<<< Updated upstream
     def one_letter_match(self, word, indexes: list[int]) -> bool:
         ''' RULE: for optional game mode in which one letter must remain in the 
         same position and the word must be valid.'''
+=======
+    def one_letter_match(self, word, index) -> bool:
+        ''' 
+        This function provides a rule implementation and ensures that the rule 
+        was followed. It is an optional game mode. 
+        For this rule one letter must remain in the exact same position as it 
+        was in the previous word. This position is determined randomly by the 
+        game. 
+
+        Parameters: word is a string representing the new word input by the user
+            indexes is a list of integers that we will check for matches
+
+        Returns: True if the rule is upheld and one letter remained in the same 
+        position and False otherwise. '''
+>>>>>>> Stashed changes
         prev_word = self._prev_words[-1]
         if prev_word[self._keep_index] == word[self._keep_index]:
             return True
