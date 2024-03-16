@@ -51,7 +51,6 @@ class WordRules:
         word = "".join(letters).lower() 
         if  word in self._word_list: # Valid word
             if word not in self._prev_words: # Previously guessed
-                self._prev_words.append(word)
                 return True
         return False
     
@@ -83,6 +82,7 @@ class WordRules:
         position and False otherwise. 
         '''
         if self._prev_words == []:
+            self._prev_words.append("".join(letters))
             return True
         
         prev_word = self._prev_words[-1]
@@ -91,6 +91,7 @@ class WordRules:
             # Compare previous word to current word 
             if prev_word[index] != letters[index]:
                 return False
+        self._prev_words.append("".join(letters))
         return True
     
     def first_last_match(self, letters: list[str]) -> bool:
@@ -104,9 +105,14 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise. 
         '''
+        if self._prev_words == []:
+            self._prev_words.append("".join(letters))
+            return True
+
         prev_word = self._prev_words[-1]
 
         if prev_word[-1] == letters[0]:
+                self._prev_words.append("".join(letters))
                 return True
         return False
 
@@ -126,6 +132,7 @@ class WordRules:
         Returns: True if the rule is upheld and False otherwise. 
         '''
         if letters[rand_info[0]] == rand_info[1]:
+            self._prev_words.append("".join(letters))
             return True
         return False
 
@@ -142,4 +149,7 @@ class WordRules:
         letter_set = set()
         for letter in letters:
             letter_set.add(letter)
-        return len(letter_set) == self._SIZE
+        if len(letter_set) == self._SIZE:
+            self._prev_words.append("".join(letters))
+            return True
+        return False
