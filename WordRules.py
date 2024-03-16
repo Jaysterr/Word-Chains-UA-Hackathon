@@ -11,6 +11,7 @@
 import string
 class WordRules:
     def __init__(self, SIZE: int=5):
+        self._SIZE = SIZE
         try:
             file = open('words.txt')
         except FileNotFoundError:
@@ -19,8 +20,8 @@ class WordRules:
             self._word_list = [word.strip().lower() for word in file if len(word.strip()) == SIZE and string.punctuation not in word]
             file.close()
     
-    def contains_letters(self, letters: list[str]) -> bool:
+    def contains_valid_word(self, letters: list[str]) -> bool:
         return "".join(letters).lower() in self._word_list
     
-    def check_word_len(self, letters: list[str], SIZE: int=5) -> bool:
-        return len(letters) == SIZE
+    def check_word_len(self, letters: list[str]) -> bool:
+        return len(letters) == self._SIZE
