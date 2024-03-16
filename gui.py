@@ -6,10 +6,9 @@ from GameManager import GameManager
 import asyncio
 
 input_fields = []
-global pointer
+pointer = 0
 @ui.page('/')
 def init_gui():
-    pointer = 0
     while(len(input_fields) != 0):
         input_fields.pop()
     
@@ -34,7 +33,7 @@ def init_gui():
     otp_set = [ui.input(on_change=lambda i=i: focus(i+1)) for i in range(4)]
     otp_set[0].props('autofocus')
 
-
+    print(pointer)
     with ui.header(elevated=True):
         ui.markdown("# **Word Chains**")
     textfield = ui.input("enter a word here!")
@@ -67,23 +66,37 @@ def format_timer(sec):
 
 def handle_key(e: KeyEventArguments):
     if e.key == "Backspace" and e.action.keydown:
-        if pointer > 0:
-            pointer -= 1
-            input_fields[pointer].set_value("")
-            #input_fields[pointer].enable()
-            focus(input_fields[pointer])
+        backspace()
     elif e.key == "Enter" and e.action.keydown:
-        full = True
-        for i in input_fields:
-            full = full and i.value != ""
-        if full:
-            input_fields[0].set_value("")
-            input_fields[1].set_value("")
-            input_fields[2].set_value("")
-            input_fields[3].set_value("")
-            input_fields[4].set_value("")
-    else:
-        print("ugibebnwoeg")
+        enter()
+    elif e.action.keydown:
+        add_letter(str(e.key))
+
+def backspace():
+    global pointer
+    if pointer > 0:
+        pointer -= 1
+        input_fields[pointer].set_value("")
+        # input_fields[pointer].enable()
+        focus(input_fields[pointer])
+
+def enter():
+    global pointer
+    full = True
+    for i in input_fields:
+        full = full and i.value != ""
+    if full:
+        input_fields[0].set_value("")
+        input_fields[1].set_value("")
+        input_fields[2].set_value("")
+        input_fields[3].set_value("")
+        input_fields[4].set_value("")
+        pointer = 0
+
+def add_letter(key):
+    global pointer
+    if pointer <= 4:
+        input_fields[pointer].set_value(key)
         if input_fields[pointer].value.isalpha() and len(
                 input_fields[pointer].value) == 1:
             input_fields[pointer].disable()
