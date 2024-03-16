@@ -67,6 +67,7 @@ def init_gui():
     input_fields[4].enable())
     keyboard = ui.keyboard(on_key=handle_key)
     ui.run(native=True)
+
 def format_timer(sec):
     ms = (sec % 1) * 1000
     s = sec // 1
