@@ -41,7 +41,12 @@ def init_gui():
     ''')
 
     ui.label('Hello world!').style('animation: fade 3s')
-    ui.timer(0.001, lambda: label2.set_text("{0:.3f}".format(game.get_time_elapsed() / (10**9))))
+    # ui.timer(0.001, lambda: label2.set_text("{0:.3f}s".format(game.get_time_elapsed() / (10**9)))) # alt timer style
+    ui.timer(0.001, lambda: label2.set_text(format_timer(game.get_time_elapsed() / (10**9))))
 
     ui.run(native=True)
 
+def format_timer(sec):
+    ms = (sec % 1) * 1000
+    s = sec // 1
+    return str(int(s)) + "s " + "{0:02d}".format((int(ms//10))) #+ "ms"
