@@ -93,6 +93,16 @@ class WordRules:
         return True
     
     def first_last_match(self, letters: list[str]) -> bool:
+        '''
+        This function provides a rule implementation and ensures that the rule 
+        was followed. It is an optional game mode. 
+        For this rule the last letter of the previous word must match the first
+        letter of the new word.
+
+        Parameters: letters is a list of strings representing the new word inputted by the user
+
+        Returns: True if the rule is upheld and False otherwise. 
+        '''
         prev_word = self._prev_words[-1]
 
         if prev_word[-1] == letters[0]:
