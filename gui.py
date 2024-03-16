@@ -1,10 +1,15 @@
 from nicegui import ui
 from GameManager import *
 from GameManager import GameManager
+from nicegui.events import *
+
+input_fields = []
 
 @ui.page('/')
 def init_gui():
-    input_fields = []
+    pointer = 0
+    while(len(input_fields) != 0):
+        input_fields.pop()
     with ui.tabs().classes('w-full') as tabs:
         standard = ui.tab("Standard Mode")
         not_standard = ui.tab("Not Standard Mode")
@@ -43,6 +48,11 @@ def init_gui():
     ui.label('Hello world!').style('animation: fade 3s')
     # ui.timer(0.001, lambda: label2.set_text("{0:.3f}s".format(game.get_time_elapsed() / (10**9)))) # alt timer style
     ui.timer(0.001, lambda: label2.set_text(format_timer(game.get_time_elapsed() / (10**9))))
+    print(input_fields)
+    ui.timer(0.001, lambda: input_fields[0].disable() if input_fields[0].value != "" else input_fields[0].enable())
+
+    keyboard = ui.keyboard(on_key=handle_key)
+    #ui.timer(1, lambda: print(keyboard))
 
     ui.run(native=True)
 
@@ -50,3 +60,7 @@ def format_timer(sec):
     ms = (sec % 1) * 1000
     s = sec // 1
     return str(int(s)) + "s " + "{0:02d}".format((int(ms//10))) #+ "ms"
+
+def handle_key(e: KeyEventArguments):
+    print(e.key)
+    return str(e.key)
