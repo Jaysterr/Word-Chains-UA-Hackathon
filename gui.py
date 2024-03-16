@@ -20,7 +20,7 @@ def init_gui():
             with ui.row(wrap=False).classes("content-center"):
                 for i in range(5):
                     input_fields.append(ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" filled'))
-            ui.button(on_click=lambda: input_fields[2].props(":focus();"))
+            ui.button(on_click=lambda: focus(input_fields[2]))
             textfield = ui.input("enter a word here!").classes("object-center")
             ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
             label = ui.label()
@@ -30,10 +30,7 @@ def init_gui():
     otp_set = [ui.input(on_change=lambda i=i: focus(i+1)) for i in range(4)]
     otp_set[0].props('autofocus')
 
-    def focus(i: int) -> None:
-        if i < len(otp_set):
-            ui.run_javascript(f'getElement({otp_set[i].id}).$refs.qRef.focus()')
-            
+
     with ui.header(elevated=True):
         ui.markdown("# **Word Chains**")
     textfield = ui.input("enter a word here!")
@@ -67,3 +64,8 @@ def format_timer(sec):
 def handle_key(e: KeyEventArguments):
     if e.key == "Backspace" and e.action.keydown:
         input_fields[0].set_value("")
+        
+        
+def focus(input_field) -> None:
+    ui.run_javascript(f'getElement({input_field.id}).$refs.qRef.focus()')
+            
