@@ -2,4 +2,4 @@
 
 requirements:
 - nicegui
- - use `pip3 install nicegui`
+	- use `pip3 install nicegui`
