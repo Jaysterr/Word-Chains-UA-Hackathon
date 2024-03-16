@@ -20,7 +20,7 @@ def init_gui():
             with ui.row(wrap=False).classes("content-center"):
                 for i in range(5):
                     input_fields.append(ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" filled'))
-            ui.button(on_click=lambda: ui.run_javascript(f'document.getElementById("{input_fields[3].id}").select()'))
+            ui.button(on_click=lambda: focus(input_fields[2]))
             textfield = ui.input("enter a word here!").classes("object-center")
             ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
             label = ui.label()
@@ -28,6 +28,10 @@ def init_gui():
         with ui.tab_panel(not_standard).classes('w-full'):
             ui.label("woah you found the not standard page").classes('text-emerald-500')
             
+    otp_set = [ui.input(on_change=lambda i=i: focus(i+1)) for i in range(4)]
+    otp_set[0].props('autofocus')
+
+
     with ui.header(elevated=True):
         ui.markdown("# **Word Chains**")
     textfield = ui.input("enter a word here!")
@@ -90,3 +94,6 @@ def handle_key(e: KeyEventArguments):
             input_fields[2].set_value("")
             input_fields[3].set_value("")
             input_fields[4].set_value("")
+            
+def focus(input_field) -> None:
+    ui.run_javascript(f'getElement({input_field.id}).$refs.qRef.focus()')
