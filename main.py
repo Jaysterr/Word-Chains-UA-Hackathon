@@ -5,20 +5,21 @@ import GameManager
 
 # TODO: Finish implementing a functional GUI. Eventually try to make it extra pretty
 
-textfield = ui.input("enter a word here!")
-ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
-label = ui.label()
+@ui.page('/')
+def main():
+    textfield = ui.input("enter a word here!")
+    ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
+    label = ui.label()
 
-ui.add_head_html(r'''
-<style>
-@keyframes fade {
-  from {opacity: 0;}
-  to {opacity: 1.0;}
-}
-</style>
-''')
+    ui.add_head_html(r'''
+    <style>
+    @keyframes fade {
+    from {opacity: 0;}
+    to {opacity: 1.0;}
+    }
+    </style>
+    ''')
 
-ui.label('Hello world!').style('animation: fade 3s')
+    ui.label('Hello world!').style('animation: fade 3s')
 
-ui.run()
-
+ui.run(native=True)
