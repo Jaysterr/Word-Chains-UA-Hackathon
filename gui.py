@@ -1,13 +1,15 @@
 from nicegui import ui, Client
 
 from GameManager import *
+from nicegui.events import *
 from GameManager import GameManager
 import asyncio
 
 input_fields = []
 @ui.page('/')
 def init_gui():        
-    
+    while(len(input_fields) != 0):
+        input_fields.pop()
     
     with ui.tabs().classes('w-full') as tabs:
         standard = ui.tab("Standard Mode")
@@ -47,11 +49,14 @@ def init_gui():
     ui.label('Hello world!').style('animation: fade 3s')
     # ui.timer(0.001, lambda: label2.set_text("{0:.3f}s".format(game.get_time_elapsed() / (10**9)))) # alt timer style
     ui.timer(0.001, lambda: label2.set_text(format_timer(game.get_time_elapsed() / (10**9))))
-
+    ui.timer(0.001, lambda: input_fields[0].disable() if input_fields[0].value != "" else input_fields[0].enable())
+    keyboard = ui.keyboard(on_key=handle_key)
     ui.run(native=True)
 def format_timer(sec):
     ms = (sec % 1) * 1000
     s = sec // 1
     return str(int(s)) + "s " + "{0:02d}".format((int(ms//10))) #+ "ms"
 
-
+def handle_key(e: KeyEventArguments):
+    if e.key == "Backspace" and e.action.keydown:
+        input_fields[0].set_value("")
