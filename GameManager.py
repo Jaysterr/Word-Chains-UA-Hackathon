@@ -7,6 +7,7 @@ import WordRules
 # TODO: Implement GameManager
 class GameManager:
     
+    req_letters = ["", "", "", "", ""] # list of letters that must be present in word (?)
     req_word_length = 5 # can be changed for potential gamemodes with longer/shorter words
     
     def __init__(self) -> None:

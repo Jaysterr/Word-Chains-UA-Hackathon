@@ -10,7 +10,9 @@
 # TODO: Implement WordRules
 class WordRules:
     
-    req_letters = [] # list of letters that must be present in word (?)
     
     def __init__(self):
+        pass
+    
+    def contains_letters(letters: list[str]):
         pass
