@@ -81,18 +81,19 @@ class WordRules:
         Returns: True if the rule is upheld and the specified letters remained in the same 
         position and False otherwise. 
         '''
-        if self._prev_words == []:
-            self._prev_words.append("".join(letters))
-            return True
-        
-        prev_word = self._prev_words[-1]
+        if self.contains_valid_words():
+            if self._prev_words == []:
+                self._prev_words.append("".join(letters))
+                return True
+            
+            prev_word = self._prev_words[-1]
 
-        for index in indexes:
-            # Compare previous word to current word 
-            if prev_word[index] != letters[index]:
-                return False
-        self._prev_words.append("".join(letters))
-        return True
+            for index in indexes:
+                # Compare previous word to current word 
+                if prev_word[index] == letters[index]:
+                    self._prev_words.append("".join(letters))
+                    return True
+        return False
     
     def first_last_match(self, letters: list[str]) -> bool:
         '''
@@ -105,15 +106,16 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise. 
         '''
-        if self._prev_words == []:
-            self._prev_words.append("".join(letters))
-            return True
-
-        prev_word = self._prev_words[-1]
-
-        if prev_word[-1] == letters[0]:
+        if self.contains_valid_words():
+            if self._prev_words == []:
                 self._prev_words.append("".join(letters))
                 return True
+
+            prev_word = self._prev_words[-1]
+
+            if prev_word[-1] == letters[0]:
+                    self._prev_words.append("".join(letters))
+                    return True
         return False
 
     def random_letter_match(self, letters: list[str], rand_info: tuple) -> bool:
@@ -131,9 +133,10 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise. 
         '''
-        if letters[rand_info[0]] == rand_info[1]:
-            self._prev_words.append("".join(letters))
-            return True
+        if self.contains_valid_words():
+            if letters[rand_info[0]] == rand_info[1]:
+                self._prev_words.append("".join(letters))
+                return True
         return False
 
     def no_duplicate_letters(self, letters: list[str]) -> bool:
@@ -146,10 +149,11 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise.
         '''
-        letter_set = set()
-        for letter in letters:
-            letter_set.add(letter)
-        if len(letter_set) == self._SIZE:
-            self._prev_words.append("".join(letters))
-            return True
+        if self.contains_valid_words():
+            letter_set = set()
+            for letter in letters:
+                letter_set.add(letter)
+            if len(letter_set) == self._SIZE:
+                self._prev_words.append("".join(letters))
+                return True
         return False
