@@ -3,7 +3,7 @@
 # handles game logic
 
 import time
-import WordRules
+from WordRules import *
 
 
 # TODO: Implement GameManager
