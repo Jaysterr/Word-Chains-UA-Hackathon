@@ -1,25 +1,10 @@
 # main.py
 # probably gonna be where all GUI stuff is handled, unless things become more complicated such has having multiple pages
-from nicegui import ui
 import GameManager
-
+import gui
 # TODO: Finish implementing a functional GUI. Eventually try to make it extra pretty
 
-@ui.page('/')
 def main():
-    textfield = ui.input("enter a word here!")
-    ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
-    label = ui.label()
-
-    ui.add_head_html(r'''
-    <style>
-    @keyframes fade {
-    from {opacity: 0;}
-    to {opacity: 1.0;}
-    }
-    </style>
-    ''')
-
-    ui.label('Hello world!').style('animation: fade 3s')
-
-ui.run(native=True)
+    gui.init_gui()
+    
+main()
