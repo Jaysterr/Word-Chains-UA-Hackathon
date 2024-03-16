@@ -70,23 +70,33 @@ class WordRules:
         '''
         return len(letters) == self._SIZE
 
-    def one_letter_match(self, word, index) -> bool:
+    def letter_match(self, letters: list[str], indexes: list[int]) -> bool:
         ''' 
         This function provides a rule implementation and ensures that the rule 
         was followed. It is an optional game mode. 
-        For this rule one letter must remain in the exact same position as it 
-        was in the previous word. This position is determined randomly by the 
-        game. 
+        For this rule a specified number of letters must remain in the exact 
+        same position as it was in the previous word. These positions are determined
+        randomly by the game. 
 
-        Parameters: word is a string representing the new word input by the user
-            indexes is a list of integers that we will check for matches
+        Parameters: letters is a list of strings representing the new word inputted by the user
+        indexes is a list of integers that we will check for matches
 
-        Returns: True if the rule is upheld and one letter remained in the same 
-        position and False otherwise. '''
-
+        Returns: True if the rule is upheld and the specified letters remained in the same 
+        position and False otherwise. 
+        '''
         prev_word = self._prev_words[-1]
-        if prev_word[self._keep_index] == word[self._keep_index]:
-            return True
-        return False
+
+        for index in indexes:
+            # Compare previous word to current word 
+            if prev_word[index] != letters[index]:
+                return False
+        return True
     
-    # Last matches new first or check multiple letters
+    def first_last_match(self, letters: list[str]) -> bool:
+        prev_word = self._prev_words[-1]
+
+        if prev_word[-1] == letters[0]:
+                return True
+        return False
+
+
