@@ -14,9 +14,9 @@ def init_gui():
     with ui.tabs().classes('w-full') as tabs:
         standard = ui.tab("Standard Mode")
         not_standard = ui.tab("Not Standard Mode")
-        
     with ui.tab_panels(tabs, value=standard).classes('w-full'):
         with ui.tab_panel(standard).classes("items-center"):
+            timer = ui.label()
             with ui.row(wrap=False).classes("content-center"):
                 for i in range(5):
                     input_fields.append(ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" filled'))
@@ -24,6 +24,7 @@ def init_gui():
             textfield = ui.input("enter a word here!").classes("object-center")
             ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
             label = ui.label()
+
         with ui.tab_panel(not_standard).classes('w-full'):
             ui.label("woah you found the not standard page").classes('text-emerald-500')
             
@@ -33,7 +34,7 @@ def init_gui():
     game = GameManager()
     ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
     label = ui.label()
-    label2 = ui.label()
+
     # with ui.left_drawer(top_corner=True, bottom_corner=True):
     #     ui.label("left")
 
@@ -47,9 +48,23 @@ def init_gui():
     # ''')
 
     ui.label('Hello world!').style('animation: fade 3s')
-    # ui.timer(0.001, lambda: label2.set_text("{0:.3f}s".format(game.get_time_elapsed() / (10**9)))) # alt timer style
-    ui.timer(0.001, lambda: label2.set_text(format_timer(game.get_time_elapsed() / (10**9))))
-    ui.timer(0.001, lambda: input_fields[0].disable() if input_fields[0].value != "" else input_fields[0].enable())
+    # ui.timer(0.001, lambda: timer.set_text("{0:.3f}s".format(game.get_time_elapsed() / (10**9)))) # alt timer style
+    ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
+    ui.timer(0.001, lambda: input_fields[0].disable() if input_fields[
+                                                             0].value != "" else
+    input_fields[0].enable())
+    ui.timer(0.001, lambda: input_fields[1].disable() if input_fields[
+                                                             1].value != "" else
+    input_fields[1].enable())
+    ui.timer(0.001, lambda: input_fields[2].disable() if input_fields[
+                                                             2].value != "" else
+    input_fields[2].enable())
+    ui.timer(0.001, lambda: input_fields[3].disable() if input_fields[
+                                                             3].value != "" else
+    input_fields[3].enable())
+    ui.timer(0.001, lambda: input_fields[4].disable() if input_fields[
+                                                             4].value != "" else
+    input_fields[4].enable())
     keyboard = ui.keyboard(on_key=handle_key)
     ui.run(native=True)
 def format_timer(sec):
@@ -60,3 +75,17 @@ def format_timer(sec):
 def handle_key(e: KeyEventArguments):
     if e.key == "Backspace" and e.action.keydown:
         input_fields[0].set_value("")
+        input_fields[1].set_value("")
+        input_fields[2].set_value("")
+        input_fields[3].set_value("")
+        input_fields[4].set_value("")
+    elif e.key == "Enter" and e.action.keydown:
+        full = True
+        for i in input_fields:
+            full = full and i.value != ""
+        if full:
+            input_fields[0].set_value("")
+            input_fields[1].set_value("")
+            input_fields[2].set_value("")
+            input_fields[3].set_value("")
+            input_fields[4].set_value("")
