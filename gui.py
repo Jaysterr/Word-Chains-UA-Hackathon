@@ -13,7 +13,7 @@ def init_gui():
         with ui.tab_panel(standard).classes("items-center"):
             with ui.row(wrap=False):
                 for i in range(5):
-                    input_fields.append(ui.input().classes("w-1/5").props("square"))
+                    input_fields.append(ui.input().classes("w-1/5 text-2xl").props('filled'))
                     
             textfield = ui.input("enter a word here!").classes("object-center")
             ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
