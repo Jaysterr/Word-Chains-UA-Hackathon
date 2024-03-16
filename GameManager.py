@@ -5,6 +5,7 @@
 import time
 import WordRules
 
+
 # TODO: Implement GameManager
 class GameManager:
 
@@ -17,7 +18,8 @@ class GameManager:
         return False
 
     def get_time_elapsed(self):
-        return time.monotonic_ns() - self._time
+        return time.monotonic_ns() - self._time # count up timer
+        # return (10**10) - (time.monotonic_ns() - self._time) # alt countdown timer
 
     def reset_time(self):
         self._time = time.monotonic_ns()
