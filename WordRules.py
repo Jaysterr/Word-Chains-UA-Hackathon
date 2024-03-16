@@ -81,7 +81,7 @@ class WordRules:
         Returns: True if the rule is upheld and the specified letters remained in the same 
         position and False otherwise. 
         '''
-        if self.contains_valid_words():
+        if self.contains_valid_word(letters):
             if self._prev_words == []:
                 self._prev_words.append("".join(letters))
                 return True
@@ -106,7 +106,7 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise. 
         '''
-        if self.contains_valid_words():
+        if self.contains_valid_word(letters):
             if self._prev_words == []:
                 self._prev_words.append("".join(letters))
                 return True
@@ -133,7 +133,7 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise. 
         '''
-        if self.contains_valid_words():
+        if self.contains_valid_word(letters):
             if letters[rand_info[0]] == rand_info[1]:
                 self._prev_words.append("".join(letters))
                 return True
@@ -149,7 +149,7 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise.
         '''
-        if self.contains_valid_words():
+        if self.contains_valid_word(letters):
             letter_set = set()
             for letter in letters:
                 letter_set.add(letter)
