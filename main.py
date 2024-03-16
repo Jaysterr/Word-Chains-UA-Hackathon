@@ -1,11 +1,12 @@
+# main.py
+# probably gonna be where all GUI stuff is handled, unless things become more complicated such has having multiple pages
 from nicegui import ui
+import GameManager
 
-with ui.row():
-    textfield = ui.input("enter a word here!")
+# TODO: Finish implementing a functional GUI. Eventually try to make it extra pretty
 
-with ui.row():
-    ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
-    
-with ui.row():
-    label = ui.label()
+textfield = ui.input("enter a word here!")
+ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
+label = ui.label()
+
 ui.run()
