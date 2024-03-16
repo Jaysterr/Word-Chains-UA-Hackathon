@@ -51,7 +51,6 @@ class WordRules:
         word = "".join(letters).lower() 
         if  word in self._word_list: # Valid word
             if word not in self._prev_words: # Previously guessed
-                # Call all the rules we want
                 self._prev_words.append(word)
                 return True
         return False
@@ -70,15 +69,15 @@ class WordRules:
         return len(letters) == self._SIZE
 
     def letter_match(self, letters: list[str], indexes: list[int]) -> bool:
-        ''' 
+        '''
         This function provides a rule implementation and ensures that the rule 
         was followed. It is an optional game mode. 
-        For this rule one letter must remain in the exact same position as it 
-        was in the previous word. This position is determined randomly by 
-        the game. 
+        For this rule a specified number of letters must remain in the exact 
+        same position as it was in the previous word. These positions are determined
+        randomly by the game. 
 
         Parameters: letters is a list of strings representing the new word inputted by the user
-        index is an list containing an integer that we will ensure matches
+        indexes is a list of integers that we will check for matches
 
         Returns: True if the rule is upheld and the specified letters remained in the same 
         position and False otherwise. 
@@ -141,25 +140,3 @@ class WordRules:
         for letter in letters:
             letter_set.add(letter)
         return len(letter_set) == self._SIZE
-    
-    def random_amt_let_match(self, letters: list[str], index_match: int) -> bool:
-        '''
-        This function provides a rule implementation and ensures that the rule 
-        was followed. It is an optional game mode. 
-        For this rule a specified number of letters must remain in the exact 
-        same position as it was in the previous word. These positions are determined
-        randomly by the game. 
-
-        Parameters: letters is a list of strings representing the new word inputted by the user
-        indexes is a list of integers that we will check for matches
-
-        Returns: True if the rule is upheld and the specified letters remained in the same 
-        position and False otherwise. 
-        '''
-        prev_word = self._prev_words[-1]
-
-        for index in index_match:
-            # Compare previous word to current word 
-            if prev_word[index] != letters[index]:
-                return False
-        return True
