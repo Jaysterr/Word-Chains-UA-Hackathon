@@ -82,6 +82,9 @@ class WordRules:
         Returns: True if the rule is upheld and the specified letters remained in the same 
         position and False otherwise. 
         '''
+        if self._prev_words == []:
+            return True
+        
         prev_word = self._prev_words[-1]
 
         for index in indexes:
