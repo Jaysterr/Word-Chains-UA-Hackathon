@@ -33,7 +33,7 @@ class WordRules:
             self._word_list = [word.strip().lower() for word in file if len(word.strip()) == SIZE and string.punctuation not in word]
             file.close()
     
-    def contains_valid_word(self, letters: list[str], indexes: list[int]) -> bool:
+    def contains_valid_word(self, letters: list[str]) -> bool:
         '''
         This method is used to determine if a user word (in the form of a list)
         is a valid guess by comparing it against the rules. It takes in a list
@@ -52,9 +52,8 @@ class WordRules:
         if  word in self._word_list: # Valid word
             if word not in self._prev_words: # Previously guessed
                 # Call all the rules we want
-                if self.one_letter_match(word, indexes):
-                    self._prev_words.append(word)
-                    return True
+                self._prev_words.append(word)
+                return True
         return False
     
     def check_word_len(self, letters: list[str]) -> bool:
