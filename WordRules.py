@@ -11,6 +11,15 @@
 import string
 class WordRules:
     def __init__(self, SIZE: int=5):
+        '''
+        Initialize the WordRules object. Creates attributes for the constant
+        size of the words which can vary depending on the game mode. It also
+        creates an attribute for the list of valid words read in from a text
+        file. An attribute is also kept for the last 
+
+        Parameters: SIZE is a int constant representing the specified word 
+        size of the game. It defaults to 5 if no constant is given.
+        '''
         self._SIZE = SIZE
         try:
             file = open('words.txt')
