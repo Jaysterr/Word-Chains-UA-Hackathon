@@ -70,11 +70,6 @@ class WordRules:
         '''
         return len(letters) == self._SIZE
 
-<<<<<<< Updated upstream
-    def one_letter_match(self, word, indexes: list[int]) -> bool:
-        ''' RULE: for optional game mode in which one letter must remain in the 
-        same position and the word must be valid.'''
-=======
     def one_letter_match(self, word, index) -> bool:
         ''' 
         This function provides a rule implementation and ensures that the rule 
@@ -88,7 +83,7 @@ class WordRules:
 
         Returns: True if the rule is upheld and one letter remained in the same 
         position and False otherwise. '''
->>>>>>> Stashed changes
+
         prev_word = self._prev_words[-1]
         if prev_word[self._keep_index] == word[self._keep_index]:
             return True
