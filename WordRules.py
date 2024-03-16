@@ -109,4 +109,31 @@ class WordRules:
                 return True
         return False
 
+    def random_letter_match(self, letters: list[str], rand_info: tuple) -> bool:
+        '''
+        This function provides a rule implementation and ensures that the rule 
+        was followed. It is an optional game mode. 
+        For this rule the game will randomly decide on a letter and an index. 
+        The user must generate a valid word containing the specified character 
+        at the specified index. 
 
+        Parameters: letters is a list of strings representing the new word inputted by the user
+        rand_info is a tuple containing two values. The first is an integer 
+        representing the index of the random letter and second is a string representing 
+        the character that must be in that position.
+
+        Returns: True if the rule is upheld and False otherwise. 
+        '''
+        if letters[rand_info[0]] == rand_info[1]:
+            return True
+        return False
+
+    def no_letters_match(self, letters: list[str]) -> bool:
+        '''
+        This function provides a rule implementation and ensures that the rule 
+        was followed. It is an optional game mode. 
+        '''
+        letter_set = set()
+        for letter in letters:
+            letter_set.add(letter)
+        return len(letter_set) == self._SIZE
