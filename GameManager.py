@@ -2,17 +2,22 @@
 # A manager for... the game :O
 # handles game logic
 
+import time
 import WordRules
 
 # TODO: Implement GameManager
 class GameManager:
-    
-    req_letters = ["", "", "", "", ""] # list of letters that must be present in word (?)
-    req_word_length = 5 # can be changed for potential gamemodes with longer/shorter words
-    
+
     def __init__(self) -> None:
-        return
+        self._req_letters = ["", "", "", "", ""]  # list of letters that must be present in word (?)
+        self._req_word_length = 5  # can be changed for potential gamemodes with longer/shorter words
+        self._time = time.monotonic_ns() # keeping track of time (in ns to avoid floating point errors), init to current time
     
     def is_valid_word(self, word: str) -> bool:
         return False
-    
+
+    def get_time_elapsed(self):
+        return time.monotonic_ns() - self._time
+
+    def reset_time(self):
+        self._time = time.monotonic_ns()
