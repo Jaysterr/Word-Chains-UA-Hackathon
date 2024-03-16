@@ -9,7 +9,6 @@
 
 # TODO: Implement WordRules
 import string
-import random
 
 class WordRules:
     def __init__(self, SIZE: int=5):
@@ -25,27 +24,43 @@ class WordRules:
         self._SIZE = SIZE
         self._prev_words = []
         try:
+            # Open file of valid words
             file = open('words.txt')
         except FileNotFoundError:
             print('ERROR: File not found')
         else:
+            # read the file and create list of valid words of specified length
             self._word_list = [word.strip().lower() for word in file if len(word.strip()) == SIZE and string.punctuation not in word]
             file.close()
     
-    def contains_valid_word(self, letters: list[str], index) -> bool:
+    def contains_valid_word(self, letters: list[str], indexes: list[int]) -> bool:
+        '''
+        This method is used to determine if a user word (in the form of a list)
+        is a valid guess by comparing it against the rules. It takes in a list
+        of indexes which represent indexes where the letters shouldn't have changed
+        based on the previous word. If the word is valid and new, it is added
+        to the previous word list, and returns True, in any other case it returns
+        False since a rule was violated.
+
+        Parameters: letters is a list of strings representing a user word. 
+        indexes is a list of integers representing indexes where letters should be 
+        the same between the current user word and the previous word.
+
+        Returns: True if the word is valid and False otherwise
+        '''
         word = "".join(letters).lower() 
         if  word in self._word_list: # Valid word
             if word not in self._prev_words: # Previously guessed
-                self._prev_words.append(word)
                 # Call all the rules we want
-                if self.one_letter_match(word, index):
+                if self.one_letter_match(word, indexes):
+                    self._prev_words.append(word)
                     return True
         return False
     
     def check_word_len(self, letters: list[str]) -> bool:
         return len(letters) == self._SIZE
 
-    def one_letter_match(self, word, index) -> bool:
+    def one_letter_match(self, word, indexes: list[int]) -> bool:
         ''' RULE: for optional game mode in which one letter must remain in the 
         same position and the word must be valid.'''
         prev_word = self._prev_words[-1]
