@@ -6,10 +6,7 @@ import asyncio
 
 input_fields = []
 @ui.page('/')
-def init_gui():
-    
-    async def javascript_stuff():
-        ui.run_javascript(f"document.getElementById({input_fields[3].id}).select()")
+def init_gui():        
     
     
     with ui.tabs().classes('w-full') as tabs:
@@ -21,7 +18,7 @@ def init_gui():
             with ui.row(wrap=False).classes("content-center"):
                 for i in range(5):
                     input_fields.append(ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" filled'))
-            ui.button(on_click=javascript_stuff)
+            ui.button(on_click=lambda: ui.run_javascript(f'document.getElementById("{input_fields[3].id}").select()'))
             textfield = ui.input("enter a word here!").classes("object-center")
             ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
             label = ui.label()
