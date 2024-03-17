@@ -31,7 +31,7 @@ def init_gui():
     with ui.header(elevated=True).props("text-center"):
         ui.markdown("# **Word Chains**")
     with ui.footer(elevated=True):
-        theme = ui.button(icon="dark_mode", on_click=toggle_lightdark_mode)
+        theme = ui.button(icon="dark_mode", on_click=toggle_dark_mode)
     
     # main content
     with ui.tabs().classes('w-full') as tabs:
@@ -42,8 +42,11 @@ def init_gui():
             timer = ui.label()
             with ui.row(wrap=False).classes("content-center"):
                 for i in range(5):
-                    input_fields[i] = ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" filled')
-                    input_fields[i].disable()
+                    input_fields[i] = ui.input(on_change=input_changed).classes("w-1/6 text-2xl").props('input-class="text-center" filled mask="A"')
+                    if i is not 0: 
+                        input_fields[i].disable()
+                    else:
+                        input_fields[0].props("autofocus")
             ui.button("focus box 3 test", on_click=lambda: focus(input_fields[2]))
 
         with ui.tab_panel(not_standard).classes('w-full'):
@@ -57,15 +60,17 @@ def init_gui():
             ui.label("Game Rules").classes("text-h6")
         with ui.card_section().classes(""):
             with ui.row():        
-                ui.checkbox("first_last_match", on_change=lambda: SessionData.active_game_rules.__setitem__(0, not SessionData.active_game_rules[0]))
-                ui.checkbox("random_letter_match", on_change=lambda: SessionData.active_game_rules.__setitem__(1, not SessionData.active_game_rules[1]))
-                ui.checkbox("no_duplicate_letters", on_change=lambda: SessionData.active_game_rules.__setitem__(2, not SessionData.active_game_rules[2]))    
+                ui.checkbox("First Last Match", on_change=lambda: SessionData.active_game_rules.__setitem__(0, not SessionData.active_game_rules[0]))
+                ui.checkbox("Random Letter Match", on_change=lambda: SessionData.active_game_rules.__setitem__(1, not SessionData.active_game_rules[1]))
+                ui.checkbox("No Duplicate Letters", on_change=lambda: SessionData.active_game_rules.__setitem__(2, not SessionData.active_game_rules[2]))    
+                ui.checkbox("Game Letter Match", on_change=lambda: SessionData.active_game_rules.__setitem__(2, not SessionData.active_game_rules[2]))    
+
             #ui.label().bind_text_from(SessionData, "active_game_rules", backward=lambda x: x.__str__())
             
     # ui.timer(0.001, lambda: timer.set_text("{0:.3f}s".format(game.get_time_elapsed() / (10**9)))) # alt timer style
     ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
-    keyboard = ui.keyboard(on_key=handle_key)
-    
+    keyboard = ui.keyboard(on_key=handle_key, ignore=[])
+
     # RUN UI
     ui.run(native=True)
 
@@ -84,28 +89,34 @@ def handle_key(e: KeyEventArguments):
     elif e.action.keydown:
         add_letter(str(e.key))
 
-def backspace():
+def backspace(): # clear current input and move to previous input
     global pointer
     if pointer > 0:
+        if pointer <= 4:
+            input_fields[pointer].set_value("")
+            input_fields[pointer].disable()
         pointer -= 1
         input_fields[pointer].set_value("")
-        # input_fields[pointer].enable()
+        input_fields[pointer].enable()
         focus(input_fields[pointer])
 
-def enter():
+def enter(): # reset entire input state
     global pointer
     full = True
     for i in input_fields:
         full = full and i.value != ""
     if full:
+        input_fields[0].enable()
+        focus(input_fields[0])
+        pointer = 0
+
         input_fields[0].set_value("")
         input_fields[1].set_value("")
         input_fields[2].set_value("")
         input_fields[3].set_value("")
         input_fields[4].set_value("")
-        pointer = 0
 
-def add_letter(key):
+def add_letter(key): # add key to input and move to next input 
     global pointer
     if pointer <= 4:
         input_fields[pointer].set_value(key)
@@ -114,6 +125,7 @@ def add_letter(key):
             input_fields[pointer].disable()
             pointer += 1
             if pointer <= 4:
+                input_fields[pointer].enable()
                 focus(input_fields[pointer])
         else:
             input_fields[pointer].set_value("")
@@ -122,7 +134,7 @@ def focus(input_field) -> None:
     ui.run_javascript(f'getElement({input_field.id}).$refs.qRef.focus()')
 
 
-def toggle_lightdark_mode():
+def toggle_dark_mode():
     global is_dark_mode
     global theme
     if is_dark_mode:
