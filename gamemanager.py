@@ -96,13 +96,19 @@ class GameManager:
             index = rand.randint(0, len(valid)-1)
             while index not in valid: # Valid should never be empty at this point
                 index = rand.randint(0, len(valid)-1)
+            ###
+            ### Super not done
+            if self._gamemode[3] and WordRules.determine_if_possible(fixed_indexes): # no duplicate letters and valid
+                pass
+            ###
+            while letter in fixed_indexes: # 
+                letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
             #
             # Check collisions with duplicate letter
             #
             self._req_letters[index] = letter
 
         # all are checked and done need to return which indexes are fixed (could instead of true false fix with letter here too and check =="")
-        # Game 
 
     def toggle_gamemode(self, control: int) -> None:
         '''
