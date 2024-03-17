@@ -7,11 +7,23 @@ import asyncio
 
 input_fields = []
 pointer = 0
+is_dark_mode = False
+theme = None # will contain day/night mode button
+
 @ui.page('/')
 def init_gui():
+    global theme
+    # configure color palette
+    #ui.colors(dark='#cccccc')
+    
     while(len(input_fields) != 0):
         input_fields.pop()
     
+    with ui.header(elevated=True).props("text-center"):
+        ui.markdown("# **Word Chains**")
+    with ui.footer(elevated=True):
+        theme = ui.button(icon="dark_mode", on_click=toggle_lightdark_mode)
+        
     with ui.tabs().classes('w-full') as tabs:
         standard = ui.tab("Standard Mode")
         not_standard = ui.tab("Not Standard Mode")
@@ -22,42 +34,27 @@ def init_gui():
                 for i in range(5):
                     input_fields.append(ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" filled'))
                     input_fields[i].disable()
-            ui.button(on_click=lambda: focus(input_fields[2]))
-            textfield = ui.input("enter a word here!").classes("object-center")
-            ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
-            label = ui.label()
+                    
+            ui.button("focus box 3 test", on_click=lambda: focus(input_fields[2]))
 
         with ui.tab_panel(not_standard).classes('w-full'):
             ui.label("woah you found the not standard page").classes('text-emerald-500')
-            
-    otp_set = [ui.input(on_change=lambda i=i: focus(i+1)) for i in range(4)]
-    otp_set[0].props('autofocus')
 
     print(pointer)
-    with ui.header(elevated=True):
-        ui.markdown("# **Word Chains**")
-    textfield = ui.input("enter a word here!")
+
     game = GameManager()
-    ui.button("Click to submit answer", on_click=lambda: label.set_text("You typed: " + textfield.value))
-    label = ui.label()
-
-    # with ui.left_drawer(top_corner=True, bottom_corner=True):
-    #     ui.label("left")
-
-    # ui.add_head_html(r'''
-    # <style>
-    # @keyframes fade {
-    # from {opacity: 0;}
-    # to {opacity: 1.0;}
-    # }
-    # </style>
-    # ''')
-
-    ui.label('Hello world!').style('animation: fade 3s')
+    
+    with ui.card().props('').classes("w-full items-center"):
+        ui.radio(options=["first_last_match", "random_letter_match", "no_duplicate_letters"]).props("inline")
+        
     # ui.timer(0.001, lambda: timer.set_text("{0:.3f}s".format(game.get_time_elapsed() / (10**9)))) # alt timer style
     ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
     keyboard = ui.keyboard(on_key=handle_key)
+    
+    # RUN UI
     ui.run(native=True)
+
+
 
 def format_timer(sec):
     ms = (sec % 1) * 1000
@@ -108,3 +105,16 @@ def add_letter(key):
 
 def focus(input_field) -> None:
     ui.run_javascript(f'getElement({input_field.id}).$refs.qRef.focus()')
+
+
+def toggle_lightdark_mode():
+    global is_dark_mode
+    global theme
+    if is_dark_mode:
+        ui.dark_mode().disable()
+        theme.props("icon=light_mode")
+        is_dark_mode = False
+    else:
+        ui.dark_mode().enable()
+        theme.props("icon=dark_mode")
+        is_dark_mode = True
