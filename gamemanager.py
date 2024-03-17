@@ -81,14 +81,15 @@ class GameManager:
             placed = False
             while not placed:
                 found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._gamemode[3] and WordRules.determine_if_possible(self._req_letters): # no duplicate letters and valid
-                    if WordRules.get_prev_word()[found] not in self._req_letters: # Would cause auto loss
-                        self._req_letters[found] = WordRules.get_prev_word()[found]
-                        placed = True
-                elif WordRules.determine_if_possible(self._req_letters): # check valid here this will need to change with Jakobs
-                    self._req_letters[found] = WordRules.get_prev_word()[found]
+                if self._gamemode[3]: # no duplicate letters and valid
+                    if WordRules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
+                        valid.append(found)
+                        continue                
+                self._req_letters[found] = WordRules.get_prev_word()[found]
+                if WordRules.determine_if_possible(self._req_letters): 
                     placed = True
                 else:
+                    self._req_letters[found] = ""
                     valid.append(found) # purposely do not increment loop
                     valid.sort()
 
@@ -97,6 +98,7 @@ class GameManager:
             index = rand.randint(0, len(valid)-1)
             while index not in valid: # Valid should never be empty at this point
                 index = rand.randint(0, len(valid)-1)
+           
             ###
             ### Super not done
             if self._gamemode[3] and WordRules.determine_if_possible(self._req_letters): # no duplicate letters and valid
