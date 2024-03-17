@@ -1,17 +1,17 @@
-# WordRules
-# defines all the possible rules/restrictions for a word
+'''
+File: WordRules.py
+defines all the possible rules/restrictions for a word and different game modes.
+It is capable of checking if a word is valid and running 5 different games. 
+There is the base game of letter match (base and random version handled more by 
+the game manager), a first letter matching last letter game,a random letter matching 
+game, and a no letter duplicates matching game.
 
-#    not sure exactly how this should be structured/operated yet. 
-#    But seems like it may be a good idea to seperate rules to their own file
-#    so we can more easily add additional rules and such, and keep things readable
-#
-#    could be merged with GameManager if it turns out there isnt good enough reason to seperate
-
-# TODO: Implement WordRules
+@authors: Jakob Garcia and Caroline Schwengler
+'''
 import string
 
 class WordRules:
-    def __init__(self, SIZE: int=5):
+    def __init__(self, SIZE: int=5) -> None:
         '''
         Initialize the WordRules object. Creates attributes for the constant
         size of the words which can vary depending on the game mode. It also
@@ -36,15 +36,10 @@ class WordRules:
     def contains_duplicate_word(self, letters: list[str]) -> bool: 
         '''
         This method is used to determine if a user word (in the form of a list)
-        is a valid guess by comparing it against the rules. It takes in a list
-        of indexes which represent indexes where the letters shouldn't have changed
-        based on the previous word. If the word is valid and new, it is added
-        to the previous word list, and returns True, in any other case it returns
-        False since a rule was violated.
+        is a valid guess by comparing it against the rules. If the word is a new
+        word, it returns True
 
         Parameters: letters is a list of strings representing a user word. 
-        indexes is a list of integers representing indexes where letters should be 
-        the same between the current user word and the previous word.
 
         Returns: True if the word is valid and False otherwise
         '''
@@ -54,11 +49,25 @@ class WordRules:
         return False
     
     def contains_valid_word(self, letters: list[str]) -> bool: 
+        '''
+        This method is used to determine if a user word (in the form of a list)
+        is a valid guess by comparing it against the rules. If the word is a valid
+        word in the word list, it returns True
+
+        Parameters: letters is a list of strings representing a user word. 
+
+        Returns: True if the word is valid and False otherwise
+        '''
         word = "".join(letters).lower() 
         if word in self._word_list: # Valid word
             return True
         return False
 
+    def get_prev_word(self) -> str:
+        '''
+        Return whatever the previous word was
+        '''
+        return self._prev_words[-1]
     
     def check_word_len(self, letters: list[str]) -> bool:
         '''
@@ -72,6 +81,49 @@ class WordRules:
         otherwise. 
         '''
         return len(letters) == self._SIZE
+    
+
+    def determine_if_possible(self, letters: list[str]) -> bool:
+        '''
+        This method is used for determining if a given layout of characters
+        has any possible words that can be created by filling in the blanks. After
+        determining if words are possible, it checks how many of those words have 
+        already been guessed. If there are no possible words after checking 
+        for previous guesses, the method returns False. It returns True if there
+        is at least one possible word to guess.
+
+        Parameters: Letters is a list of strings that represents a layout the
+        user will guess in.
+
+        Returns: True if there is a possible word and False otherwise
+        '''
+        possible_words = []
+        # iterate through the users word
+        for i in range(len(letters)):
+            if letters[i] != '':
+                # if we have not found possible words based on the leading char yet, 
+                # determine possible words
+                if possible_words == []:
+                    for word in self._word_list:
+                        if word[i] == letters[i]:
+                            possible_words.append(word)
+                else:
+                    # If we do have possible words, filter out the words that don't match the other characters
+                    j = 0
+                    new_words = []
+                    while j < len(possible_words): 
+                        if possible_words[j][i] != letters[i]:
+                            possible_words.pop(j)
+                            j-=1
+                        else:
+                            new_words.append(possible_words[j])
+
+                        j += 1
+                    if new_words != []:
+                        possible_words = new_words
+        # Account for words already used, and determine if there are still possible words
+        return len(set(possible_words) - set(self._prev_words)) != 0
+
 
     def letter_match(self, letters: list[str], indexes: list[int]) -> bool:
         '''

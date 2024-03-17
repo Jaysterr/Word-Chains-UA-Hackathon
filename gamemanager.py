@@ -1,7 +1,20 @@
-# gamemanager.py
-# A manager for... the game :O
-# handles game logic
+'''
+File: GameManager.py
+A manager for the game that handles all of the games logic. It interacts 
+directly with the WordRules class and the GUI for the game. The logic of the game 
+would run as follows:
 
+1. toggle the gamemodes (toggle_gamemode())
+2. determine the rules of the current game (run_game())
+3. Get the current template the user must fill in (get_letters())
+4. set the users word back into self._req_letters (set_user_word())
+5. determine if the user's word is valid (is_valid())
+6. Run the games and get a boolean value back. True means the game was successful
+so continue onto the next game (GUI repeats this list from 2). False means the word
+was repeated and so the game should end
+
+@authors: Jakob Garcia and Caroline Schwengler
+'''
 import time
 import random as rand
 from WordRules import *
@@ -22,21 +35,83 @@ class GameManager:
         '''
         Setter method for the GUI to update the users word for this round of the
         game
+
+        Parameters: A list of strings representing a word from the user
         '''
         for i in range(len(self._req_letters)):
             self._req_letters[i] = word[i]
 
+    def get_letters(self) -> list[str]:
+        '''
+        A getter method for the GUI to use to determine what preset letters
+        to display
+
+        Returns: a list of string representing the preset template of strings
+        determined by setting the rules.
+        '''
+        return self._req_letters
+
     def run_game(self):
-        if self._gamemode[1]:
-            return self.game_first_last_match()
-        elif self._gamemode[2]:
-            return self.game_random_letter_match()
-        elif self._gamemode[3]:
-            return self.game_no_duplicate_letters()
-        elif self._gamemode[4]:
-            return self.game_multi_letter_match()
-        else:
-            return self.game_letter_match()
+        # If we want this to work for other word lengths the line above should be tweaked all else works I think
+        valid = [0, 1, 2, 3, 4]
+
+        if self._gamemode[1]: # fist_last match enabled
+            self._req_letters[0] = WordRules.get_prev_word()[-1]
+            valid.pop(0)
+
+        if self._gamemode[4]: # multi letter match enabled
+            amount = rand.randint(2, 4)
+            i = 0
+            while i < amount:
+                found = valid.pop(rand.randint(0, len(valid)-1))
+                if self._gamemode[3]:  # no dup
+                    if WordRules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
+                        valid.append(found)
+                        continue
+                self._req_letters[found] = WordRules.get_prev_word()[found]
+                if WordRules.determine_if_possible(self._req_letters):
+                    i += 1
+                else: # no possible words we need new index
+                    self._req_letters[found] = ""
+                    valid.append(found) # purposely do not increment loop 
+                    valid.sort()
+            
+        if self._gamemode[0] and not self._gamemode[4]: # letter match enabled
+            # Ensures letter match will not run if multi letter match is enabled
+            placed = False
+            while not placed:
+                found = valid.pop(rand.randint(0, len(valid)-1))
+                if self._gamemode[3]: # no duplicate letters and valid
+                    if WordRules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
+                        valid.append(found)
+                        continue                
+                self._req_letters[found] = WordRules.get_prev_word()[found]
+                if WordRules.determine_if_possible(self._req_letters): 
+                    placed = True
+                else:
+                    self._req_letters[found] = ""
+                    valid.append(found) # purposely do not increment loop
+                    valid.sort()
+
+        if self._gamemode[2]: 
+            letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
+            index = rand.randint(0, len(valid)-1)
+            while index not in valid: # Valid should never be empty at this point
+                index = rand.randint(0, len(valid)-1)
+           
+            ###
+            ### Super not done
+            if self._gamemode[3] and WordRules.determine_if_possible(self._req_letters): # no duplicate letters and valid
+                pass
+            ###
+            while letter in self._req_letters: # 
+                letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
+            #
+            # Check collisions with duplicate letter
+            #
+            self._req_letters[index] = letter
+
+        # all are checked and done need to return which indexes are fixed (could instead of true false fix with letter here too and check =="")
 
     def toggle_gamemode(self, control: int) -> None:
         '''
@@ -80,15 +155,25 @@ class GameManager:
         if self._word_rules.letter_match(self._req_letters, [indexes]):
             return True
         return False
-
         
     def is_valid(self) -> bool:
+        '''
+        Determine if the user's word is valid based on the length and content.
+
+        Returns: True if valid and False otherwise
+        '''
         return self._word_rules.check_word_len() and self._word_rules.contains_valid_word()
 
 
-    def get_time_elapsed(self):
-        #return time.monotonic_ns() - self._time # count up timer
-        return (10**10) - (time.monotonic_ns() - self._time) # alt countdown timer
+    def get_time_elapsed(self) -> int:
+        '''
+        Returns the current time on the timer
+        '''
+        return time.monotonic_ns() - self._time # count up timer
+        # return (10**10) - (time.monotonic_ns() - self._time) # alt countdown timer
 
-    def reset_time(self):
+    def reset_time(self) -> None:
+        '''
+        Resets the timer 
+        '''
         self._time = time.monotonic_ns()
