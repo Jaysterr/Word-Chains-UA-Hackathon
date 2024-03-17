@@ -76,10 +76,11 @@ def init_gui():
             ui.label("Game Rules").classes("text-h6")
         with ui.card_section().classes(""):
             with ui.row():        
-                ui.checkbox("First Last Match", on_change=lambda: SessionData.active_game_rules.__setitem__(0, not SessionData.active_game_rules[0])).props("")
-                ui.checkbox("Random Letter Match", on_change=lambda: SessionData.active_game_rules.__setitem__(1, not SessionData.active_game_rules[1]))
-                ui.checkbox("No Duplicate Letters", on_change=lambda: SessionData.active_game_rules.__setitem__(2, not SessionData.active_game_rules[2]))    
-                ui.checkbox("Game Letter Match", on_change=lambda: SessionData.active_game_rules.__setitem__(2, not SessionData.active_game_rules[2]))    
+                ui.checkbox("First Last Match", on_change=game.toggle_gamemode(0))
+                ui.checkbox("Random Letter Match", on_change=game.toggle_gamemode(1))
+                ui.checkbox("No Duplicate Letters", on_change=game.toggle_gamemode(2))
+                ui.checkbox("Multi-Letter match", on_change=game.toggle_gamemode(3))
+                ui.checkbox("Game Letter Match", on_change=game.toggle_gamemode(4))
 
             #ui.label().bind_text_from(SessionData, "active_game_rules", backward=lambda x: x.__str__())
             
