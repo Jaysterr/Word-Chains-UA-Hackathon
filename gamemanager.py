@@ -27,19 +27,6 @@ class GameManager:
             self._req_letters[i] = word[i]
 
     def run_game(self):
-<<<<<<< Updated upstream
-        
-        if self._gamemode[1]:
-            return self.game_first_last_match()
-        elif self._gamemode[2]:
-            return self.game_random_letter_match()
-        elif self._gamemode[3]:
-            return self.game_no_duplicate_letters()
-        elif self._gamemode[4]:
-            return self.game_multi_letter_match()
-        else:
-            return self.game_letter_match()
-=======
         fixed_indexes = ["", "", "", "", ""] # Could get rid of and change all to self._req_letters
         # If we want this to work for other word lengths the line above should be tweaked all else works I think
         valid = [0, 1, 2, 3, 4]
@@ -92,7 +79,6 @@ class GameManager:
 
         # all are checked and done need to return which indexes are fixed (could instead of true false fix with letter here too and check =="")
         # Game 
->>>>>>> Stashed changes
 
     def toggle_gamemode(self, control: int) -> None:
         '''
