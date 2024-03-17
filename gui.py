@@ -76,7 +76,7 @@ def init_gui():
             ui.label("Game Rules").classes("text-h6")
         with ui.card_section().classes(""):
             with ui.row():        
-                ui.checkbox("First Last Match", on_change=game.toggle_gamemode(0))
+                ui.checkbox("First Last Match", value=True, on_change=game.toggle_gamemode(0))
                 ui.checkbox("Random Letter Match", on_change=game.toggle_gamemode(1))
                 ui.checkbox("No Duplicate Letters", on_change=game.toggle_gamemode(2))
                 ui.checkbox("Multi-Letter match", on_change=game.toggle_gamemode(3))
