@@ -11,7 +11,7 @@ game, and a no letter duplicates matching game.
 import string
 
 class WordRules:
-    def __init__(self, SIZE: int=5):
+    def __init__(self, SIZE: int=5) -> None:
         '''
         Initialize the WordRules object. Creates attributes for the constant
         size of the words which can vary depending on the game mode. It also
@@ -63,7 +63,10 @@ class WordRules:
             return True
         return False
 
-    def get_prev_word(self):
+    def get_prev_word(self) -> str:
+        '''
+        Return whatever the previous word was
+        '''
         return self._prev_words[-1]
     
     def check_word_len(self, letters: list[str]) -> bool:

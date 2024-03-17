@@ -22,9 +22,21 @@ class GameManager:
         '''
         Setter method for the GUI to update the users word for this round of the
         game
+
+        Parameters: A list of strings representing a word from the user
         '''
         for i in range(len(self._req_letters)):
             self._req_letters[i] = word[i]
+
+    def get_letters(self) -> list[str]:
+        '''
+        A getter method for the GUI to use to determine what preset letters
+        to display
+
+        Returns: a list of string representing the preset template of strings
+        determined by setting the rules.
+        '''
+        return self._req_letters
 
     def run_game(self):
         fixed_indexes = ["", "", "", "", ""] # Could get rid of and change all to self._req_letters
@@ -127,9 +139,15 @@ class GameManager:
         return self._word_rules.check_word_len() and self._word_rules.contains_valid_word()
 
 
-    def get_time_elapsed(self):
+    def get_time_elapsed(self) -> int:
+        '''
+        Returns the current time on the timer
+        '''
         return time.monotonic_ns() - self._time # count up timer
         # return (10**10) - (time.monotonic_ns() - self._time) # alt countdown timer
 
-    def reset_time(self):
+    def reset_time(self) -> None:
+        '''
+        Resets the timer 
+        '''
         self._time = time.monotonic_ns()
