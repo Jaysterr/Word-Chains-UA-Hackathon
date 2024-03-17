@@ -15,7 +15,7 @@ class GameManager:
         self._req_word_length = 5  # can be changed for potential gamemodes with longer/shorter words
         self._time = time.monotonic_ns() # keeping track of time (in ns to avoid floating point errors), init to current time
         self._word_rules = WordRules(self._req_word_length)
-        self._gamemode = [1, 0, 0, 0, 0]
+        self._gamemode = [True, False, False, False, False]
         self._indexes = []
 
     def set_user_word(self, word: list[str]) -> None:
@@ -23,13 +23,13 @@ class GameManager:
             self._req_letters[i] = word[i]
 
     def run_game(self):
-        if self._gamemode[1] == 1:
+        if self._gamemode[1]:
             return self.game_first_last_match()
-        elif self._gamemode[2] == 1:
+        elif self._gamemode[2]:
             return self.game_random_letter_match()
-        elif self._gamemode[3] == 1:
+        elif self._gamemode[3]:
             return self.game_no_duplicate_letters()
-        elif self._gamemode[4] == 1:
+        elif self._gamemode[4]:
             return self.game_multi_letter_match()
         else:
             return self.game_letter_match()
