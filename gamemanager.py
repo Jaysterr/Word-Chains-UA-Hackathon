@@ -27,6 +27,7 @@ class GameManager:
             self._req_letters[i] = word[i]
 
     def run_game(self):
+        
         if self._gamemode[1]:
             return self.game_first_last_match()
         elif self._gamemode[2]:
