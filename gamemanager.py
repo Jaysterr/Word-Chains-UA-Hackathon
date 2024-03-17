@@ -51,12 +51,13 @@ class GameManager:
         '''
         return self._req_letters
 
-    def run_game(self):
+    def determine_rules(self):
+        # This needs to be rerun each round of the game
         # If we want this to work for other word lengths the line above should be tweaked all else works I think
         valid = [0, 1, 2, 3, 4]
 
         if self._gamemode[1]: # fist_last match enabled
-            self._req_letters[0] = WordRules.get_prev_word()[-1]
+            self._req_letters[0] = self._word_rules.get_prev_word()[-1]
             valid.pop(0)
 
         if self._gamemode[4]: # multi letter match enabled
@@ -65,11 +66,11 @@ class GameManager:
             while i < amount:
                 found = valid.pop(rand.randint(0, len(valid)-1))
                 if self._gamemode[3]:  # no dup
-                    if WordRules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
+                    if self._word_rules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
                         valid.append(found)
                         continue
-                self._req_letters[found] = WordRules.get_prev_word()[found]
-                if WordRules.determine_if_possible(self._req_letters):
+                self._req_letters[found] = self._word_rules.get_prev_word()[found]
+                if self._word_rules.determine_if_possible(self._req_letters):
                     i += 1
                 else: # no possible words we need new index
                     self._req_letters[found] = ""
@@ -82,11 +83,11 @@ class GameManager:
             while not placed:
                 found = valid.pop(rand.randint(0, len(valid)-1))
                 if self._gamemode[3]: # no duplicate letters and valid
-                    if WordRules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
+                    if self._word_rules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
                         valid.append(found)
                         continue                
-                self._req_letters[found] = WordRules.get_prev_word()[found]
-                if WordRules.determine_if_possible(self._req_letters): 
+                self._req_letters[found] = self._word_rules.get_prev_word()[found]
+                if self._word_rules.determine_if_possible(self._req_letters): 
                     placed = True
                 else:
                     self._req_letters[found] = ""
@@ -94,24 +95,22 @@ class GameManager:
                     valid.sort()
 
         if self._gamemode[2]: 
-            letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
             index = rand.randint(0, len(valid)-1)
             while index not in valid: # Valid should never be empty at this point
-                index = rand.randint(0, len(valid)-1)
-           
-            ###
-            ### Super not done
-            if self._gamemode[3] and WordRules.determine_if_possible(self._req_letters): # no duplicate letters and valid
-                pass
-            ###
-            while letter in self._req_letters: # 
+                index = rand.randint(0, len(valid)-1) # Will get valid index
+            good = False
+            while not good:
                 letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
-            #
-            # Check collisions with duplicate letter
-            #
-            self._req_letters[index] = letter
-
-        # all are checked and done need to return which indexes are fixed (could instead of true false fix with letter here too and check =="")
+                if self._gamemode[3]: # no duplicate letters and valid
+                    while letter in self._req_letters: 
+                        letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
+                self._req_letters[index] = letter
+                if not self._word_rules.determine_if_possible(self._req_letters):
+                    self._req_letters[found] = ""
+                    valid.append(found) # purposely do not increment loop
+                    valid.sort()
+                else:
+                    good = True
 
     def toggle_gamemode(self, control: int) -> None:
         '''
