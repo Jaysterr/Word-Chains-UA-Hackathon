@@ -36,15 +36,10 @@ class WordRules:
     def contains_duplicate_word(self, letters: list[str]) -> bool: 
         '''
         This method is used to determine if a user word (in the form of a list)
-        is a valid guess by comparing it against the rules. It takes in a list
-        of indexes which represent indexes where the letters shouldn't have changed
-        based on the previous word. If the word is valid and new, it is added
-        to the previous word list, and returns True, in any other case it returns
-        False since a rule was violated.
+        is a valid guess by comparing it against the rules. If the word is a new
+        word, it returns True
 
         Parameters: letters is a list of strings representing a user word. 
-        indexes is a list of integers representing indexes where letters should be 
-        the same between the current user word and the previous word.
 
         Returns: True if the word is valid and False otherwise
         '''
@@ -54,6 +49,15 @@ class WordRules:
         return False
     
     def contains_valid_word(self, letters: list[str]) -> bool: 
+        '''
+        This method is used to determine if a user word (in the form of a list)
+        is a valid guess by comparing it against the rules. If the word is a valid
+        word in the word list, it returns True
+
+        Parameters: letters is a list of strings representing a user word. 
+
+        Returns: True if the word is valid and False otherwise
+        '''
         word = "".join(letters).lower() 
         if word in self._word_list: # Valid word
             return True
@@ -75,6 +79,19 @@ class WordRules:
     
 
     def determine_if_possible(self, letters: list[str]) -> bool:
+        '''
+        This method is used for determining if a given layout of characters
+        has any possible words that can be created by filling in the blanks. After
+        determining if words are possible, it checks how many of those words have 
+        already been guessed. If there are no possible words after checking 
+        for previous guesses, the method returns False. It returns True if there
+        is at least one possible word to guess.
+
+        Parameters: Letters is a list of strings that represents a layout the
+        user will guess in.
+
+        Returns: True if there is a possible word and False otherwise
+        '''
         possible_words = []
         # iterate through the users word
         for i in range(len(letters)):
