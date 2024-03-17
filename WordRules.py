@@ -63,6 +63,8 @@ class WordRules:
             return True
         return False
 
+    def get_prev_word(self):
+        return self._prev_words[-1]
     
     def check_word_len(self, letters: list[str]) -> bool:
         '''
