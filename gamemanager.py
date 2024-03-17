@@ -52,12 +52,11 @@ class GameManager:
         return self._req_letters
 
     def run_game(self):
-        fixed_indexes = ["", "", "", "", ""] # Could get rid of and change all to self._req_letters
         # If we want this to work for other word lengths the line above should be tweaked all else works I think
         valid = [0, 1, 2, 3, 4]
 
         if self._gamemode[1]: # fist_last match enabled
-            fixed_indexes[0] = WordRules.get_prev_word()[-1]
+            self._req_letters[0] = WordRules.get_prev_word()[-1]
             valid.pop(0)
 
         if self._gamemode[4]: # multi letter match enabled
@@ -65,12 +64,12 @@ class GameManager:
             i = 0
             while i < amount:
                 found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._gamemode[3] and WordRules.determine_if_possible(fixed_indexes): # no duplicate letters and valid
-                    if WordRules.get_prev_word()[found] not in fixed_indexes: # Would cause auto loss
-                        fixed_indexes[found] = WordRules.get_prev_word()[found]
+                if self._gamemode[3] and WordRules.determine_if_possible(self._req_letters): # no duplicate letters and valid
+                    if WordRules.get_prev_word()[found] not in self._req_letters: # Would cause auto loss
+                        self._req_letters[found] = WordRules.get_prev_word()[found]
                         i += 1
-                elif WordRules.determine_if_possible(fixed_indexes): # check valid 
-                    fixed_indexes[found] = WordRules.get_prev_word()[found]
+                elif WordRules.determine_if_possible(self._req_letters): # check valid 
+                    self._req_letters[found] = WordRules.get_prev_word()[found]
                     i += 1 
                 else:
                     valid.append(found) # purposely do not increment loop 
@@ -81,12 +80,12 @@ class GameManager:
             placed = False
             while not placed:
                 found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._gamemode[3] and WordRules.determine_if_possible(fixed_indexes): # no duplicate letters and valid
-                    if WordRules.get_prev_word()[found] not in fixed_indexes: # Would cause auto loss
-                        fixed_indexes[found] = WordRules.get_prev_word()[found]
+                if self._gamemode[3] and WordRules.determine_if_possible(self._req_letters): # no duplicate letters and valid
+                    if WordRules.get_prev_word()[found] not in self._req_letters: # Would cause auto loss
+                        self._req_letters[found] = WordRules.get_prev_word()[found]
                         placed = True
-                elif WordRules.determine_if_possible(fixed_indexes): # check valid here this will need to change with Jakobs
-                    fixed_indexes[found] = WordRules.get_prev_word()[found]
+                elif WordRules.determine_if_possible(self._req_letters): # check valid here this will need to change with Jakobs
+                    self._req_letters[found] = WordRules.get_prev_word()[found]
                     placed = True
                 else:
                     valid.append(found) # purposely do not increment loop
@@ -100,7 +99,7 @@ class GameManager:
             #
             # Check collisions with duplicate letter
             #
-            fixed_indexes[index] = letter
+            self._req_letters[index] = letter
 
         # all are checked and done need to return which indexes are fixed (could instead of true false fix with letter here too and check =="")
         # Game 
