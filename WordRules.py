@@ -1,13 +1,13 @@
-# WordRules
-# defines all the possible rules/restrictions for a word
+'''
+Class: WordRules
+defines all the possible rules/restrictions for a word and different game modes.
+It is capable of checking if a word is valid and running 5 different games. 
+There is the base game of letter match (base and random version handled more by 
+the game manager), a first letter matching last letter game,a random letter matching 
+game, and a no letter duplicates matching game.
 
-#    not sure exactly how this should be structured/operated yet. 
-#    But seems like it may be a good idea to seperate rules to their own file
-#    so we can more easily add additional rules and such, and keep things readable
-#
-#    could be merged with GameManager if it turns out there isnt good enough reason to seperate
-
-# TODO: Implement WordRules
+@authors: Jakob Garcia and Caroline Schwengler
+'''
 import string
 
 class WordRules:
