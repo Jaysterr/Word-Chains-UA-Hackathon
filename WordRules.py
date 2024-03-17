@@ -1,5 +1,5 @@
 '''
-Class: WordRules
+File: WordRules.py
 defines all the possible rules/restrictions for a word and different game modes.
 It is capable of checking if a word is valid and running 5 different games. 
 There is the base game of letter match (base and random version handled more by 
