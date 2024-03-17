@@ -19,6 +19,10 @@ class GameManager:
         self._indexes = []
 
     def set_user_word(self, word: list[str]) -> None:
+        '''
+        Setter method for the GUI to update the users word for this round of the
+        game
+        '''
         for i in range(len(self._req_letters)):
             self._req_letters[i] = word[i]
 
