@@ -40,11 +40,11 @@ class GameManager:
             i = 0
             while i < amount:
                 found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._gamemode[3] and True: # no duplicate letters      ## no dup and valid
+                if self._gamemode[3] and WordRules.determine_if_possible(fixed_indexes): # no duplicate letters and valid
                     if WordRules.get_prev_word()[found] not in fixed_indexes: # Would cause auto loss
                         fixed_indexes[found] = WordRules.get_prev_word()[found]
                         i += 1
-                elif True: # check valid here this will need to change with Jakobs
+                elif WordRules.determine_if_possible(fixed_indexes): # check valid 
                     fixed_indexes[found] = WordRules.get_prev_word()[found]
                     i += 1 
                 else:
@@ -56,11 +56,11 @@ class GameManager:
             placed = False
             while not placed:
                 found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._gamemode[3] and True: # no duplicate letters      ## no dup and valid
+                if self._gamemode[3] and WordRules.determine_if_possible(fixed_indexes): # no duplicate letters and valid
                     if WordRules.get_prev_word()[found] not in fixed_indexes: # Would cause auto loss
                         fixed_indexes[found] = WordRules.get_prev_word()[found]
                         placed = True
-                elif True: # check valid here this will need to change with Jakobs
+                elif WordRules.determine_if_possible(fixed_indexes): # check valid here this will need to change with Jakobs
                     fixed_indexes[found] = WordRules.get_prev_word()[found]
                     placed = True
                 else:
