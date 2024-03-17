@@ -83,7 +83,7 @@ class GameManager:
 
         
     def is_valid(self) -> bool:
-        return self._word_rules.check_word_len()
+        return self._word_rules.check_word_len() and self._word_rules.contains_valid_word()
 
 
     def get_time_elapsed(self):
