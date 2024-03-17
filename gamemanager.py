@@ -177,3 +177,4 @@ class GameManager:
         Resets the timer 
         '''
         self._time = time.monotonic_ns()
+
