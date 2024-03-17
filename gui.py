@@ -5,19 +5,23 @@ from nicegui.events import *
 from GameManager import GameManager
 import asyncio
 
-input_fields = []
+input_fields = [0]*5 # empty list with 5 slots
 pointer = 0
 is_dark_mode = False
 theme = None # will contain day/night mode button
+game = GameManager()
 
 @ui.page('/')
 def init_gui():
     global theme
+    global game
+    global inp
     # configure color palette
     #ui.colors(dark='#cccccc')
     
-    while(len(input_fields) != 0):
-        input_fields.pop()
+    ui.add_head_html('''
+                     ''')
+    
     
     with ui.header(elevated=True).props("text-center"):
         ui.markdown("# **Word Chains**")
@@ -32,9 +36,9 @@ def init_gui():
             timer = ui.label()
             with ui.row(wrap=False).classes("content-center"):
                 for i in range(5):
-                    input_fields.append(ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" filled'))
+                    input_fields[i] = ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" filled')
                     input_fields[i].disable()
-                    
+                print(input_fields)    
             ui.button("focus box 3 test", on_click=lambda: focus(input_fields[2]))
 
         with ui.tab_panel(not_standard).classes('w-full'):
@@ -42,10 +46,15 @@ def init_gui():
 
     print(pointer)
 
-    game = GameManager()
     
-    with ui.card().props('').classes("w-full items-center"):
-        ui.radio(options=["first_last_match", "random_letter_match", "no_duplicate_letters"]).props("inline")
+    with ui.card().tight().props("bordered").classes("w-full items-center"):
+        with ui.card_section().classes("w-full bg-primary text-white"):
+            ui.label("Game Rules").classes("text-h6")
+        with ui.card_section().classes(""):
+            with ui.row():        
+                ui.checkbox("first_last_match")
+                ui.checkbox("random_letter_match")
+                ui.checkbox("no_duplicate_letters")
         
     # ui.timer(0.001, lambda: timer.set_text("{0:.3f}s".format(game.get_time_elapsed() / (10**9)))) # alt timer style
     ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
