@@ -19,6 +19,10 @@ class GameManager:
         self._indexes = []
 
     def set_user_word(self, word: list[str]) -> None:
+        '''
+        Setter method for the GUI to update the users word for this round of the
+        game
+        '''
         for i in range(len(self._req_letters)):
             self._req_letters[i] = word[i]
 
@@ -34,8 +38,12 @@ class GameManager:
         else:
             return self.game_letter_match()
 
-    def change_gamemode(self, controls: list[int]) -> None:
-        self._gamemode = controls
+    def toggle_gamemode(self, control: int) -> None:
+        '''
+        Setter method for GUI to update the control variables that determine
+        which game rules should be active 
+        '''
+        self._gamemode[control] = not self._gamemode[control]
 
     
     def game_letter_match(self) -> bool:
@@ -75,7 +83,7 @@ class GameManager:
 
         
     def is_valid(self) -> bool:
-        return self._word_rules.check_word_len()
+        return self._word_rules.check_word_len() and self._word_rules.contains_valid_word()
 
 
     def get_time_elapsed(self):
