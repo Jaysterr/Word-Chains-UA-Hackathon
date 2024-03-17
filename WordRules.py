@@ -72,6 +72,36 @@ class WordRules:
         otherwise. 
         '''
         return len(letters) == self._SIZE
+    
+
+    def determine_if_possible(self, letters: list[str]) -> bool:
+        possible_words = []
+        # iterate through the users word
+        for i in range(len(letters)):
+            if letters[i] != '':
+                # if we have not found possible words based on the leading char yet, 
+                # determine possible words
+                if possible_words == []:
+                    for word in self._word_list:
+                        if word[i] == letters[i]:
+                            possible_words.append(word)
+                else:
+                    # If we do have possible words, filter out the words that don't match the other characters
+                    j = 0
+                    new_words = []
+                    while j < len(possible_words): 
+                        if possible_words[j][i] != letters[i]:
+                            possible_words.pop(j)
+                            j-=1
+                        else:
+                            new_words.append(possible_words[j])
+
+                        j += 1
+                    if new_words != []:
+                        possible_words = new_words
+        # Account for words already used, and determine if there are still possible words
+        return len(set(possible_words) - set(self._prev_words)) != 0
+
 
     def letter_match(self, letters: list[str], indexes: list[int]) -> bool:
         '''
