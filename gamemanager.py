@@ -64,14 +64,15 @@ class GameManager:
             i = 0
             while i < amount:
                 found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._gamemode[3] and WordRules.determine_if_possible(self._req_letters): # no duplicate letters and valid
-                    if WordRules.get_prev_word()[found] not in self._req_letters: # Would cause auto loss
-                        self._req_letters[found] = WordRules.get_prev_word()[found]
-                        i += 1
-                elif WordRules.determine_if_possible(self._req_letters): # check valid 
-                    self._req_letters[found] = WordRules.get_prev_word()[found]
-                    i += 1 
-                else:
+                if self._gamemode[3]:  # no dup
+                    if WordRules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
+                        valid.append(found)
+                        continue
+                self._req_letters[found] = WordRules.get_prev_word()[found]
+                if WordRules.determine_if_possible(self._req_letters):
+                    i += 1
+                else: # no possible words we need new index
+                    self._req_letters[found] = ""
                     valid.append(found) # purposely do not increment loop 
                     valid.sort()
             
@@ -98,10 +99,10 @@ class GameManager:
                 index = rand.randint(0, len(valid)-1)
             ###
             ### Super not done
-            if self._gamemode[3] and WordRules.determine_if_possible(fixed_indexes): # no duplicate letters and valid
+            if self._gamemode[3] and WordRules.determine_if_possible(self._req_letters): # no duplicate letters and valid
                 pass
             ###
-            while letter in fixed_indexes: # 
+            while letter in self._req_letters: # 
                 letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
             #
             # Check collisions with duplicate letter
