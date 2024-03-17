@@ -1,9 +1,13 @@
-from nicegui import ui, Client
-
+from nicegui import ui, app, native
 from gamemanager import *
 from nicegui.events import *
 from gamemanager import GameManager
 import dataclasses
+
+import os
+script_dir = os.path.dirname(__file__)
+rel_path = "how2play.md"
+abs_file_path = os.path.join(script_dir, rel_path)
 
 @dataclass
 class SessionData:
@@ -16,8 +20,9 @@ theme = None # will contain day/night mode button
 game = GameManager()
 
 
-
-
+app.config.quasar_config['animations'] = [
+    'fadeOutDown'
+]
 
 @ui.page('/')
 def init_gui():
@@ -41,7 +46,7 @@ def init_gui():
     with ui.header(elevated=True).props("text-center"):
         with ui.row().classes("w-full items-center items-stretch"):
             with ui.dialog() as dialog, ui.card().classes("items-center"):
-                with open("how2play.md") as file:
+                with open(abs_file_path) as file:
                     ui.markdown(file.read())
                 ui.button('Close', on_click=dialog.close)
             
@@ -58,13 +63,12 @@ def init_gui():
         highscores = ui.tab("Highscores")
     with ui.tab_panels(tabs, value=standard).classes('w-full'):
         with ui.tab_panel(standard).classes("items-center"):
-            start_game_button = ui.button("Start Game!", on_click=lambda:fade_out_button)
+            ui.html(content='<Transition name="fade" move="out-in" appear> <div v-if="ok">toggled content</div> </Transition>')
+            start_game_button = ui.button("Start Game!", on_click=lambda:fade_out_button).props('enter-active-class="animated fadeIn"')#.classes("transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300")
             main_game_area()
 
         with ui.tab_panel(highscores).classes('w-full'):
             highscore_chart()
-
-    print(pointer)
 
     
     with ui.card().tight().props("bordered").classes("w-full items-center"):
@@ -72,10 +76,11 @@ def init_gui():
             ui.label("Game Rules").classes("text-h6")
         with ui.card_section().classes(""):
             with ui.row():        
-                ui.checkbox("First Last Match", on_change=lambda: SessionData.active_game_rules.__setitem__(0, not SessionData.active_game_rules[0])).props("")
-                ui.checkbox("Random Letter Match", on_change=lambda: SessionData.active_game_rules.__setitem__(1, not SessionData.active_game_rules[1]))
-                ui.checkbox("No Duplicate Letters", on_change=lambda: SessionData.active_game_rules.__setitem__(2, not SessionData.active_game_rules[2]))    
-                ui.checkbox("Game Letter Match", on_change=lambda: SessionData.active_game_rules.__setitem__(2, not SessionData.active_game_rules[2]))    
+                ui.checkbox("First Last Match", value=True, on_change=game.toggle_gamemode(0))
+                ui.checkbox("Random Letter Match", on_change=game.toggle_gamemode(1))
+                ui.checkbox("No Duplicate Letters", on_change=game.toggle_gamemode(2))
+                ui.checkbox("Multi-Letter match", on_change=game.toggle_gamemode(3))
+                ui.checkbox("Game Letter Match", on_change=game.toggle_gamemode(4))
 
             #ui.label().bind_text_from(SessionData, "active_game_rules", backward=lambda x: x.__str__())
             
@@ -83,8 +88,10 @@ def init_gui():
     
     keyboard = ui.keyboard(on_key=handle_key, ignore=[])
 
-    # RUN UI
-    ui.run(native=True, window_size=(1000, 850))
+    # DISABLE RELOAD WHEN BUILDING
+    ui.run(reload=True, native=True, window_size=(1000, 850))
+    #ui.run(reload=False, port=native.find_open_port(), native=True, window_size=(1000, 850))
+
 
 def fade_out_button():
     global start_game_button
@@ -95,7 +102,7 @@ def main_game_area():
     with ui.row(wrap=False).classes("content-center"):
         for i in range(5):
             input_fields[i] = ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" filled mask="A"')
-            if i is not 0: 
+            if i != 0: 
                 input_fields[i].disable()
             else:
                 input_fields[0].props("autofocus")

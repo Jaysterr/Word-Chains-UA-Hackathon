@@ -1,4 +1,4 @@
-# GameManager.py
+# gamemanager.py
 # A manager for... the game :O
 # handles game logic
 
