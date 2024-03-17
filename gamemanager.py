@@ -34,8 +34,12 @@ class GameManager:
         else:
             return self.game_letter_match()
 
-    def change_gamemode(self, controls: list[int]) -> None:
-        self._gamemode = controls
+    def toggle_gamemode(self, control: int) -> None:
+        '''
+        Setter method for GUI to update the control variables that determine
+        which game rules should be active 
+        '''
+        self._gamemode[control] = not self._gamemode[control]
 
     
     def game_letter_match(self) -> bool:
