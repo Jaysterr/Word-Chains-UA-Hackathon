@@ -63,25 +63,22 @@ class GameManager:
                 valid.pop(index)
         else:
             if self._gamemode[1]: # first_last match enabled
-                self._req_letters[0] = self._word_rules.get_prev_word()[-1]
-                valid.pop(0)
+                future_letters = [self._req_letters[4], "", "", "", ""]
 
             if self._gamemode[4]: # multi letter match enabled
-                amount = rand.randint(2, 4)
-                i = 0
-                while i < amount:
-                    found = valid.pop(rand.randint(0, len(valid)-1))
-                    if self._gamemode[3]:  # no dup
-                        if self._word_rules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
-                            valid.append(found)
-                            continue
-                    self._req_letters[found] = self._word_rules.get_prev_word()[found]
-                    if self._word_rules.determine_if_possible(self._req_letters):
-                        i += 1
-                    else: # no possible words we need new index
-                        self._req_letters[found] = ""
-                        valid.append(found) # purposely do not increment loop 
-                        valid.sort()
+                possible_i = [i for i in valid]
+                keep_i = possible_i.pop(rand.randint(0, len(possible_i) - 1))
+                future_letters[keep_i] = self._req_letters[keep_i]
+                while (not self._word_rules.determine_if_possible(
+                        future_letters)) and len(possible_i) != 0:
+                    print("sadu")
+                    print(future_letters)
+                    future_letters[keep_i] = ""
+                    keep_i = possible_i.pop(
+                        rand.randint(0, len(possible_i) - 1))
+                    future_letters[keep_i] = self._req_letters[keep_i]
+                if len(possible_i) == 0:
+                    future_letters[keep_i] = ""
                 
             if self._gamemode[0] and not self._gamemode[4]: # letter match enabled
                 # Ensures letter match will not run if multi letter match is enabled
@@ -117,6 +114,7 @@ class GameManager:
                         valid.sort()
                     else:
                         good = True
+            self._req_letters = future_letters
 
     def run_game(self) -> bool:
         '''
@@ -131,14 +129,14 @@ class GameManager:
             results = results and self._word_rules.letter_match(self._req_letters, [0,1,2,3,4])
         if self._gamemode[1]:
             results = results and self._word_rules.first_last_match(self._req_letters)
-            future_letters = [self._req_letters[4], "", "", "", ""]
+            #future_letters = [self._req_letters[4], "", "", "", ""]
         if self._gamemode[2]:
             results = results and self._word_rules.random_letter_match(self._req_letters, [0,1,2,3,4])
         if self._gamemode[3]:
             results = results and self._word_rules.no_duplicate_letters(self._req_letters, [0,1,2,3,4])
         if self._gamemode[4]:
             results = results and self._word_rules.letter_match(self._req_letters, [0,1,2,3,4])
-            possible_i = [i for i in range(int(self._gamemode[1]), 5)]
+            """ possible_i = [i for i in range(int(self._gamemode[1]), 5)]
             keep_i = possible_i.pop(rand.randint(0, len(possible_i) - 1))
             future_letters[keep_i] = self._req_letters[keep_i]
             while (not self._word_rules.determine_if_possible(future_letters)) and len(possible_i) != 0:
@@ -149,7 +147,7 @@ class GameManager:
                 future_letters[keep_i] = self._req_letters[keep_i]
             if len(possible_i) == 0:
                 future_letters[keep_i] = ""
-        self._req_letters = future_letters
+        self._req_letters = future_letter """
         return results
 
     def toggle_gamemode(self, control: int) -> None:

@@ -172,6 +172,7 @@ def enter(): # reset entire input state
         game.set_user_word([i.value.lower() for i in input_fields])
         print(game.check_word(), game._req_letters, game._word_rules.get_prev_words())
         game.run_game()
+        game.determine_rules()
         input_fields[0].set_value(game.get_letters()[0])
         input_fields[1].set_value(game.get_letters()[1])
         input_fields[2].set_value(game.get_letters()[2])
