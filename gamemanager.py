@@ -30,6 +30,7 @@ class GameManager:
         self._time = None # keeping track of time (in ns to avoid floating point errors), init to None
         self._word_rules = WordRules(self._req_word_length)
         self._gamemode = [True, False, False, False, False]
+        self._time_limit = 15
 
     def set_user_word(self, word: list[str]) -> None:
         '''
@@ -173,8 +174,8 @@ class GameManager:
         '''
         #return time.monotonic_ns() - self._time # count up timer
         if self._time == None:
-            return 20 * (10**9)
-        return (20 * (10**9)) - (time.monotonic_ns() - self._time) # alt countdown timer
+            return self._time_limit * (10**9)
+        return (self._time_limit * (10**9)) - (time.monotonic_ns() - self._time) # alt countdown timer
 
     def check_word(self) -> (bool, bool):
         '''
@@ -186,15 +187,17 @@ class GameManager:
                     (True, True) = repeat word
                     (False, True) = repeat invalid word
         '''
-        return(self.is_valid(), not self._word_rules.contains_duplicate_word(self._req_letters))
+        return (self.is_valid(), not self._word_rules.contains_duplicate_word(self._req_letters))
 
+    def set_time_limit(self, time_limit: int) -> None:
+        self.time_limit = time_limit
+        
     def reset_time(self) -> None:
         '''
-        Resets the timer 
+        Resets the timer
         '''
         self._time = time.monotonic_ns()
-
-
+        
     def reset_game(self) -> None:
         '''
         Resets the game
