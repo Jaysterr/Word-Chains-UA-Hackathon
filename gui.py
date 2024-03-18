@@ -95,10 +95,6 @@ def init_gui():
 def initialize_game():
     pass
 
-def fade_out_button():
-    global start_game_button
-    start_game_button.style('animation: fadeout 3s')
-    
     
 def main_game_area():
     timer = ui.label()
@@ -127,8 +123,18 @@ def highscore_chart():
     ],
 }))
 
-def start_game():
+
+def initialize_game():
+    game.reset_game()
+    game.determine_rules()
+    assign_req_letters()
     pass
+
+def assign_req_letters():
+    req_letters = game.get_letters()
+    for i in range(5):
+        input_fields[i].set_value(req_letters[i])
+
 
 def format_timer(sec):
     ms = (sec % 1) * 1000
