@@ -63,7 +63,6 @@ def init_gui():
         highscores = ui.tab("Highscores")
     with ui.tab_panels(tabs, value=standard).classes('w-full'):
         with ui.tab_panel(standard).classes("items-center"):
-            ui.html(content='<Transition name="fade" move="out-in" appear> <div v-if="ok">toggled content</div> </Transition>')
             start_game_button = ui.button("Start Game!", on_click=lambda:fade_out_button).props('enter-active-class="animated fadeIn"')#.classes("transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300")
             main_game_area()
 
@@ -96,12 +95,19 @@ def init_gui():
 def fade_out_button():
     global start_game_button
     start_game_button.style('animation: fadeout 3s')
+    
+    
 def main_game_area():
     timer = ui.label()
-    ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
-    with ui.row(wrap=False).classes("content-center"):
+    with ui.circular_progress(show_value=False, value=20, max=20).props('size="6rem"') as timer_circle_display:
+        progress_label = ui.label("20.00").bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
+
+    #ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
+    ui.timer(0.01, lambda: timer_circle_display.set_value(game.get_time_elapsed() / (10**9)))
+
+    with ui.row(wrap=False).classes("w-1/2 justify-center"):
         for i in range(5):
-            input_fields[i] = ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" filled mask="A"')
+            input_fields[i] = ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" standout="bg-primary" v-model="text" filled mask="A"')
             if i != 0: 
                 input_fields[i].disable()
             else:

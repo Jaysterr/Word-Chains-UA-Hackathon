@@ -168,11 +168,12 @@ class GameManager:
         '''
         Returns the current time on the timer
         '''
-        return time.monotonic_ns() - self._time # count up timer
-        # return (10**10) - (time.monotonic_ns() - self._time) # alt countdown timer
+        #return time.monotonic_ns() - self._time # count up timer
+        return (10**10) - (time.monotonic_ns() - self._time) # alt countdown timer
 
     def reset_time(self) -> None:
         '''
         Resets the timer 
         '''
         self._time = time.monotonic_ns()
+

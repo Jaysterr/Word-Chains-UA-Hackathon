@@ -1,4 +1,5 @@
 from WordRules import *
+from gamemanager import *
 
 def test_valid_words_letter_match():
     W = WordRules()
@@ -21,5 +22,8 @@ def test_valid_words_letter_match():
     assert W.letter_match(["c", "a", "n", "d", "y"], [3]) is True
     assert W.letter_match(["p", "h", "o", "n", "y"], [4]) is True
 
-test_valid_words_letter_match()
+#test_valid_words_letter_match()
 
+game = GameManager()
+game.run_game()
+print('s')

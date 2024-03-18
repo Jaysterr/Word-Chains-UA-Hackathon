@@ -176,7 +176,7 @@ class WordRules:
                     return True
         return False
 
-    def random_letter_match(self, letters: list[str], rand_info: tuple) -> bool:
+    def random_letter_match(self, letters: list[str]) -> bool:
         '''
         This function provides a rule implementation and ensures that the rule 
         was followed. It is an optional game mode. 
@@ -192,9 +192,7 @@ class WordRules:
         Returns: True if the rule is upheld and False otherwise. 
         '''
         if self.contains_duplicate_word(letters):
-            if letters[rand_info[0]] == rand_info[1]:
-                self._prev_words.append("".join(letters))
-                return True
+            return True
         return False
 
     def no_duplicate_letters(self, letters: list[str]) -> bool:
@@ -215,3 +213,15 @@ class WordRules:
                 self._prev_words.append("".join(letters))
                 return True
         return False
+    
+    def check_first_round(self):
+        '''
+        Get the list of previous words.
+        '''
+        return self._prev_words == []
+    
+    def reset_prev_words(self):
+        '''
+        For restarting the game. Resets the self._prev_words list
+        '''
+        self._prev_words = []
