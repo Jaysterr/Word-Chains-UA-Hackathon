@@ -12,6 +12,7 @@ would run as follows:
 6. Run the games and get a boolean value back. True means the game was successful
 so continue onto the next game (GUI repeats this list from 2). False means the word
 was repeated and so the game should end
+7. If the game is reset, call the reset game method.
 
 @authors: Jakob Garcia and Caroline Schwengler
 '''
@@ -176,4 +177,14 @@ class GameManager:
         Resets the timer 
         '''
         self._time = time.monotonic_ns()
+
+
+    def reset_game(self):
+        '''
+        Resets the game
+        '''
+        self.reset_time()
+        self._req_letters = ["", "", "", "", ""]
+        self._gamemode = [True, False, False, False, False]
+        self._word_rules.reset_prev_words()
 
