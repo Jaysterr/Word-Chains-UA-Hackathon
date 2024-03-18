@@ -5,14 +5,14 @@ directly with the WordRules class and the GUI for the game. The logic of the gam
 would run as follows:
 
 1. toggle the gamemodes (toggle_gamemode())
-2. determine the rules of the current game (run_game())
+2. determine the rules of the current game (determine_rules())
 3. Get the current template the user must fill in (get_letters())
 4. set the users word back into self._req_letters (set_user_word())
 5. determine if the user's word is valid (is_valid())
 6. Run the games and get a boolean value back. True means the game was successful
 so continue onto the next game (GUI repeats this list from 2). False means the word
-was repeated and so the game should end
-7. If the game is reset, call the reset game method.
+was repeated and so the game should end (run_game())
+7. If the game is reset, call the reset game method (reset_game()).
 
 @authors: Jakob Garcia and Caroline Schwengler
 '''
