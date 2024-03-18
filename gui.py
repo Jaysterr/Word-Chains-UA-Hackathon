@@ -75,11 +75,11 @@ def init_gui():
             ui.label("Game Rules").classes("text-h6")
         with ui.card_section().classes(""):
             with ui.row():        
-                ui.checkbox("First Last Match", value=True, on_change=game.toggle_gamemode(0))
-                ui.checkbox("Random Letter Match", on_change=game.toggle_gamemode(1))
-                ui.checkbox("No Duplicate Letters", on_change=game.toggle_gamemode(2))
-                ui.checkbox("Multi-Letter match", on_change=game.toggle_gamemode(3))
-                ui.checkbox("Game Letter Match", on_change=game.toggle_gamemode(4))
+                ui.checkbox("Random Letter Match", value=True, on_change=lambda: game.toggle_gamemode(0))
+                ui.checkbox("First Last Match", on_change=lambda: game.toggle_gamemode(1))
+                ui.checkbox("No Duplicate Letters", on_change=lambda: game.toggle_gamemode(2))
+                ui.checkbox("Multi-Letter match", on_change=lambda: game.toggle_gamemode(3))
+                ui.checkbox("Game Letter Match", on_change=lambda: game.toggle_gamemode(4))
 
             #ui.label().bind_text_from(SessionData, "active_game_rules", backward=lambda x: x.__str__())
             
@@ -147,6 +147,12 @@ def backspace(): # clear current input and move to previous input
             input_fields[pointer].set_value("")
             input_fields[pointer].disable()
         pointer -= 1
+        while pointer >= 0 and game._req_letters[pointer] != "":
+            pointer -= 1
+        if pointer < 0:
+            pointer += 1
+            while game._req_letters[pointer] != "":
+                pointer += 1
         input_fields[pointer].set_value("")
         input_fields[pointer].enable()
         focus(input_fields[pointer])
@@ -160,12 +166,23 @@ def enter(): # reset entire input state
         input_fields[0].enable()
         focus(input_fields[0])
         pointer = 0
-
-        input_fields[0].set_value("")
-        input_fields[1].set_value("")
-        input_fields[2].set_value("")
-        input_fields[3].set_value("")
-        input_fields[4].set_value("")
+        word = "";
+        #for i in input_fields:
+            #word += i.value.lower()
+        game.set_user_word([i.value.lower() for i in input_fields])
+        print(game.check_word(), game._req_letters, game._word_rules.get_prev_words())
+        game.run_game()
+        input_fields[0].set_value(game.get_letters()[0])
+        input_fields[1].set_value(game.get_letters()[1])
+        input_fields[2].set_value(game.get_letters()[2])
+        input_fields[3].set_value(game.get_letters()[3])
+        input_fields[4].set_value(game.get_letters()[4])
+        while pointer < 5 and input_fields[pointer].value != "":
+            input_fields[pointer].disable()
+            pointer += 1
+        if pointer <= 4:
+            input_fields[pointer].enable()
+            focus(input_fields[pointer])
 
 def add_letter(key): # add key to input and move to next input 
     global pointer
@@ -173,8 +190,9 @@ def add_letter(key): # add key to input and move to next input
         input_fields[pointer].set_value(key)
         if input_fields[pointer].value.isalpha() and len(
                 input_fields[pointer].value) == 1:
-            input_fields[pointer].disable()
-            pointer += 1
+            while pointer < 5 and input_fields[pointer].value != "":
+                input_fields[pointer].disable()
+                pointer += 1
             if pointer <= 4:
                 input_fields[pointer].enable()
                 focus(input_fields[pointer])

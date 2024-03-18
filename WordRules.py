@@ -68,6 +68,12 @@ class WordRules:
         Return whatever the previous word was
         '''
         return self._prev_words[-1]
+
+    def get_prev_words(self) -> list[str]:
+        '''
+        Return whatever the previous word was
+        '''
+        return self._prev_words
     
     def check_word_len(self, letters: list[str]) -> bool:
         '''

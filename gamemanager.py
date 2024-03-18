@@ -27,7 +27,7 @@ class GameManager:
     def __init__(self) -> None:
         self._req_letters = ["", "", "", "", ""]  # list of letters that must be present in word (?)
         self._req_word_length = 5  # can be changed for potential gamemodes with longer/shorter words
-        self._time = time.monotonic_ns() # keeping track of time (in ns to avoid floating point errors), init to current time
+        self._time = None # keeping track of time (in ns to avoid floating point errors), init to None
         self._word_rules = WordRules(self._req_word_length)
         self._gamemode = [True, False, False, False, False]
 
@@ -126,16 +126,30 @@ class GameManager:
         Returns: True if all specified games run successfully and False otherwise
         '''
         results = True
+        future_letters = ["", "", "", "", ""]
         if self._gamemode[0]:
-            results = results and self._word_rules.letter_match(self._req_letters)
+            results = results and self._word_rules.letter_match(self._req_letters, [0,1,2,3,4])
         if self._gamemode[1]:
             results = results and self._word_rules.first_last_match(self._req_letters)
+            future_letters = [self._req_letters[4], "", "", "", ""]
         if self._gamemode[2]:
-            results = results and self._word_rules.random_letter_match(self._req_letters)
+            results = results and self._word_rules.random_letter_match(self._req_letters, [0,1,2,3,4])
         if self._gamemode[3]:
-            results = results and self._word_rules.no_duplicate_letters(self._req_letters)
+            results = results and self._word_rules.no_duplicate_letters(self._req_letters, [0,1,2,3,4])
         if self._gamemode[4]:
-            results = results and self._word_rules.letter_match(self._req_letters)
+            results = results and self._word_rules.letter_match(self._req_letters, [0,1,2,3,4])
+            possible_i = [i for i in range(int(self._gamemode[1]), 5)]
+            keep_i = possible_i.pop(rand.randint(0, len(possible_i) - 1))
+            future_letters[keep_i] = self._req_letters[keep_i]
+            while (not self._word_rules.determine_if_possible(future_letters)) and len(possible_i) != 0:
+                print("sadu")
+                print(future_letters)
+                future_letters[keep_i] = ""
+                keep_i = possible_i.pop(rand.randint(0, len(possible_i) - 1))
+                future_letters[keep_i] = self._req_letters[keep_i]
+            if len(possible_i) == 0:
+                future_letters[keep_i] = ""
+        self._req_letters = future_letters
         return results
 
     def toggle_gamemode(self, control: int) -> None:
@@ -143,6 +157,7 @@ class GameManager:
         Setter method for GUI to update the control variables that determine
         which game rules should be active 
         '''
+        print("auigebew")
         self._gamemode[control] = not self._gamemode[control]
         
     def is_valid(self) -> bool:
@@ -151,7 +166,7 @@ class GameManager:
 
         Returns: True if valid and False otherwise
         '''
-        return self._word_rules.check_word_len() and self._word_rules.contains_valid_word()
+        return self._word_rules.check_word_len(self._req_letters) and self._word_rules.contains_valid_word(self._req_letters)
 
 
     def get_time_elapsed(self) -> int:
@@ -159,7 +174,21 @@ class GameManager:
         Returns the current time on the timer
         '''
         #return time.monotonic_ns() - self._time # count up timer
-        return (15 * (10**9)) - (time.monotonic_ns() - self._time) # alt countdown timer
+        if self._time == None:
+            return 20 * (10**9)
+        return (20 * (10**9)) - (time.monotonic_ns() - self._time) # alt countdown timer
+
+    def check_word(self) -> (bool, bool):
+        '''
+        checks the word currently in self._req_letters
+        :return: a tuple formatted as:
+                    (is_valid(), is_repeat())
+                    (True, False) = accepted word
+                    (False, False) = invalid word
+                    (True, True) = repeat word
+                    (False, True) = repeat invalid word
+        '''
+        return(self.is_valid(), not self._word_rules.contains_duplicate_word(self._req_letters))
 
     def reset_time(self) -> None:
         '''
