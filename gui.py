@@ -169,27 +169,37 @@ def enter(): # reset entire input state
     for i in input_fields:
         full = full and i.value != ""
     if full:
-        input_fields[0].enable()
-        focus(input_fields[0])
-        pointer = 0
+
         word = "";
         #for i in input_fields:
             #word += i.value.lower()
+        temp = [i for i in game.get_letters()]
         game.set_user_word([i.value.lower() for i in input_fields])
         print(game.check_word(), game._req_letters, game._word_rules.get_prev_words())
-        game.run_game()
-        game.determine_rules()
-        input_fields[0].set_value(game.get_letters()[0])
-        input_fields[1].set_value(game.get_letters()[1])
-        input_fields[2].set_value(game.get_letters()[2])
-        input_fields[3].set_value(game.get_letters()[3])
-        input_fields[4].set_value(game.get_letters()[4])
-        while pointer < 5 and input_fields[pointer].value != "":
-            input_fields[pointer].disable()
-            pointer += 1
-        if pointer <= 4:
-            input_fields[pointer].enable()
-            focus(input_fields[pointer])
+        print(pointer)
+        print(temp)
+        if game.check_word()[0] and (not game.check_word()[1]):
+            input_fields[0].enable()
+            focus(input_fields[0])
+            pointer = 0
+            game.run_game()
+            game.determine_rules()
+            input_fields[0].set_value(game.get_letters()[0])
+            input_fields[1].set_value(game.get_letters()[1])
+            input_fields[2].set_value(game.get_letters()[2])
+            input_fields[3].set_value(game.get_letters()[3])
+            input_fields[4].set_value(game.get_letters()[4])
+            while pointer < 5 and input_fields[pointer].value != "":
+                input_fields[pointer].disable()
+                pointer += 1
+            if pointer <= 4:
+                input_fields[pointer].enable()
+                focus(input_fields[pointer])
+        else:
+            game.set_user_word(temp)
+            ui.notify("INVALID WORD")
+    else:
+        ui.notify("INVALID WORD")
 
 def add_letter(key): # add key to input and move to next input 
     global pointer
