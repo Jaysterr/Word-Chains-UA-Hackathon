@@ -18,7 +18,8 @@ pointer = 0
 is_dark_mode = False
 theme = None # will contain day/night mode button
 game = GameManager()
-
+time_limit = 15
+# game.set_time_limit(time_limit)
 
 app.config.quasar_config['animations'] = [
     'fadeOutDown'
@@ -63,7 +64,7 @@ def init_gui():
         highscores = ui.tab("Highscores")
     with ui.tab_panels(tabs, value=standard).classes('w-full'):
         with ui.tab_panel(standard).classes("items-center"):
-            start_game_button = ui.button("Start Game!", on_click=lambda:fade_out_button).props('enter-active-class="animated fadeIn"')#.classes("transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300")
+            start_game_button = ui.button("Start Game!", on_click=initialize_game).props('enter-active-class="animated fadeIn"')#.classes("transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300")
             main_game_area()
 
         with ui.tab_panel(highscores).classes('w-full'):
@@ -92,15 +93,11 @@ def init_gui():
     #ui.run(reload=False, port=native.find_open_port(), native=True, window_size=(1000, 850))
 
 
-def fade_out_button():
-    global start_game_button
-    start_game_button.style('animation: fadeout 3s')
-    
     
 def main_game_area():
     timer = ui.label()
-    with ui.circular_progress(show_value=False, value=20, max=20).props('size="6rem"') as timer_circle_display:
-        progress_label = ui.label("20.00").bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
+    with ui.circular_progress(show_value=False, value=time_limit, max=time_limit).props('size="6rem"') as timer_circle_display:
+        ui.label(time_limit).bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
 
     #ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
     ui.timer(0.01, lambda: timer_circle_display.set_value(game.get_time_elapsed() / (10**9)))
@@ -124,8 +121,18 @@ def highscore_chart():
     ],
 }))
 
-def start_game():
+
+def initialize_game():
+    game.reset_game()
+    game.determine_rules()
+    assign_req_letters()
     pass
+
+def assign_req_letters():
+    req_letters = game.get_letters()
+    for i in range(5):
+        input_fields[i].set_value(req_letters[i])
+
 
 def format_timer(sec):
     ms = (sec % 1) * 1000
