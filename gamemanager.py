@@ -127,9 +127,7 @@ class GameManager:
         #             valid.sort()
         #         else:
         #             good = True
-        
-
-
+    
         # if self._gamemode[3]: # random letter
         #     index = rand.randint(0, len(valid)-1)
         #     letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
@@ -188,6 +186,9 @@ class GameManager:
             self.add_score(1)
             self.reset_time()
             self.determine_rules()
+        else:
+            # There is an repeate or invalid word in this case may want to print message
+            self.reset_game()
 
         return results
 
