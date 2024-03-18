@@ -5,13 +5,14 @@ directly with the WordRules class and the GUI for the game. The logic of the gam
 would run as follows:
 
 1. toggle the gamemodes (toggle_gamemode())
-2. determine the rules of the current game (run_game())
+2. determine the rules of the current game (determine_rules())
 3. Get the current template the user must fill in (get_letters())
 4. set the users word back into self._req_letters (set_user_word())
 5. determine if the user's word is valid (is_valid())
 6. Run the games and get a boolean value back. True means the game was successful
 so continue onto the next game (GUI repeats this list from 2). False means the word
-was repeated and so the game should end
+was repeated and so the game should end (run_game())
+7. If the game is reset, call the reset game method (reset_game()).
 
 @authors: Jakob Garcia and Caroline Schwengler
 '''
@@ -51,67 +52,72 @@ class GameManager:
         '''
         return self._req_letters
 
-    def run_game(self):
+    def determine_rules(self):
+        # This needs to be rerun each round of the game
         # If we want this to work for other word lengths the line above should be tweaked all else works I think
         valid = [0, 1, 2, 3, 4]
-
-        if self._gamemode[1]: # fist_last match enabled
-            self._req_letters[0] = WordRules.get_prev_word()[-1]
-            valid.pop(0)
-
-        if self._gamemode[4]: # multi letter match enabled
-            amount = rand.randint(2, 4)
-            i = 0
-            while i < amount:
-                found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._gamemode[3]:  # no dup
-                    if WordRules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
-                        valid.append(found)
-                        continue
-                self._req_letters[found] = WordRules.get_prev_word()[found]
-                if WordRules.determine_if_possible(self._req_letters):
-                    i += 1
-                else: # no possible words we need new index
-                    self._req_letters[found] = ""
-                    valid.append(found) # purposely do not increment loop 
-                    valid.sort()
-            
-        if self._gamemode[0] and not self._gamemode[4]: # letter match enabled
-            # Ensures letter match will not run if multi letter match is enabled
-            placed = False
-            while not placed:
-                found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._gamemode[3]: # no duplicate letters and valid
-                    if WordRules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
-                        valid.append(found)
-                        continue                
-                self._req_letters[found] = WordRules.get_prev_word()[found]
-                if WordRules.determine_if_possible(self._req_letters): 
-                    placed = True
-                else:
-                    self._req_letters[found] = ""
-                    valid.append(found) # purposely do not increment loop
-                    valid.sort()
-
-        if self._gamemode[2]: 
-            letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
-            index = rand.randint(0, len(valid)-1)
-            while index not in valid: # Valid should never be empty at this point
+        if self._word_rules.check_first_round(): # first round only random letter has rule in effect
+            if self._gamemode[2]: # random letter
                 index = rand.randint(0, len(valid)-1)
-           
-            ###
-            ### Super not done
-            if self._gamemode[3] and WordRules.determine_if_possible(self._req_letters): # no duplicate letters and valid
-                pass
-            ###
-            while letter in self._req_letters: # 
                 letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
-            #
-            # Check collisions with duplicate letter
-            #
-            self._req_letters[index] = letter
+                self._req_letters[index] = letter
+                valid.pop(index)
+        else:
+            if self._gamemode[1]: # fist_last match enabled
+                self._req_letters[0] = self._word_rules.get_prev_word()[-1]
+                valid.pop(0)
 
-        # all are checked and done need to return which indexes are fixed (could instead of true false fix with letter here too and check =="")
+            if self._gamemode[4]: # multi letter match enabled
+                amount = rand.randint(2, 4)
+                i = 0
+                while i < amount:
+                    found = valid.pop(rand.randint(0, len(valid)-1))
+                    if self._gamemode[3]:  # no dup
+                        if self._word_rules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
+                            valid.append(found)
+                            continue
+                    self._req_letters[found] = self._word_rules.get_prev_word()[found]
+                    if self._word_rules.determine_if_possible(self._req_letters):
+                        i += 1
+                    else: # no possible words we need new index
+                        self._req_letters[found] = ""
+                        valid.append(found) # purposely do not increment loop 
+                        valid.sort()
+                
+            if self._gamemode[0] and not self._gamemode[4]: # letter match enabled
+                # Ensures letter match will not run if multi letter match is enabled
+                placed = False
+                while not placed:
+                    found = valid.pop(rand.randint(0, len(valid)-1))
+                    if self._gamemode[3]: # no duplicate letters and valid
+                        if self._word_rules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
+                            valid.append(found)
+                            continue                
+                    self._req_letters[found] = self._word_rules.get_prev_word()[found]
+                    if self._word_rules.determine_if_possible(self._req_letters): 
+                        placed = True
+                    else:
+                        self._req_letters[found] = ""
+                        valid.append(found) # purposely do not increment loop
+                        valid.sort()
+
+            if self._gamemode[2]: 
+                index = rand.randint(0, len(valid)-1)
+                while index not in valid: # Valid should never be empty at this point
+                    index = rand.randint(0, len(valid)-1) # Will get valid index
+                good = False
+                while not good:
+                    letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
+                    if self._gamemode[3]: # no duplicate letters and valid
+                        while letter in self._req_letters: 
+                            letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
+                    self._req_letters[index] = letter
+                    if not self._word_rules.determine_if_possible(self._req_letters):
+                        self._req_letters[found] = ""
+                        valid.append(found) # purposely do not increment loop
+                        valid.sort()
+                    else:
+                        good = True
 
     def toggle_gamemode(self, control: int) -> None:
         '''
@@ -177,3 +183,14 @@ class GameManager:
         Resets the timer 
         '''
         self._time = time.monotonic_ns()
+
+
+    def reset_game(self):
+        '''
+        Resets the game
+        '''
+        self.reset_time()
+        self._req_letters = ["", "", "", "", ""]
+        self._gamemode = [True, False, False, False, False]
+        self._word_rules.reset_prev_words()
+
