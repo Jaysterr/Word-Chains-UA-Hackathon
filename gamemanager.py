@@ -249,7 +249,7 @@ class GameManager:
         self._time = None
         self._req_letters = ["", "", "", "", ""]
         # self._gamemode = [False, True, False, False, False]
-        self._determine_rules()
+        self.determine_rules()
         self._word_rules.reset_prev_words()
         self._score = 0
 
