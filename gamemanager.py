@@ -177,6 +177,8 @@ class GameManager:
         #return time.monotonic_ns() - self._time # count up timer
         if self._time == None:
             return self._time_limit * (10**9)
+        elif (self._time_limit * (10**9)) - (time.monotonic_ns() - self._time) < 0:
+            return 0
         return (self._time_limit * (10**9)) - (time.monotonic_ns() - self._time) # alt countdown timer
 
     def check_word(self) -> (bool, bool):
