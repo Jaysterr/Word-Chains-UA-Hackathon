@@ -85,7 +85,7 @@ def init_gui():
                 ui.checkbox("Game Letter Match", on_change=lambda: game.toggle_gamemode(4))
 
             #ui.label().bind_text_from(SessionData, "active_game_rules", backward=lambda x: x.__str__())
-            
+    
     # ui.timer(0.001, lambda: timer.set_text("{0:.3f}s".format(game.get_time_elapsed() / (10**9)))) # alt timer style
     
     keyboard = ui.keyboard(on_key=handle_key, ignore=[])
@@ -172,7 +172,7 @@ def enter(): # reset entire input state
         full = full and i.value != ""
     if full:
 
-        word = "";
+        word = ""
         #for i in input_fields:
             #word += i.value.lower()
         temp = [i for i in game.get_letters()]
