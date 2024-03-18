@@ -169,7 +169,6 @@ class GameManager:
         '''
         return self._word_rules.check_word_len(self._req_letters) and self._word_rules.contains_valid_word(self._req_letters)
 
-
     def get_time_elapsed(self) -> int:
         '''
         Returns the current time on the timer
