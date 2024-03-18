@@ -16,6 +16,7 @@ class SessionData:
 input_fields = [0]*5 # empty list with 5 slots
 pointer = 0
 is_dark_mode = False
+timer = None
 theme = None # will contain day/night mode button
 game = GameManager()
 time_limit = 15
@@ -95,20 +96,19 @@ def init_gui():
 
     
 def main_game_area():
-    timer = ui.label()
+    global timer
     with ui.circular_progress(show_value=False, value=time_limit, max=time_limit).props('size="6rem"') as timer_circle_display:
-        ui.label(time_limit).bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
+        timer = ui.label(time_limit).bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
 
     #ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
+    ui.timer(0.01, lambda: timer_update())
     ui.timer(0.01, lambda: timer_circle_display.set_value(game.get_time_elapsed() / (10**9)))
 
     with ui.row(wrap=False).classes("w-2/3 justify-center"):
         for i in range(5):
             input_fields[i] = ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" standout="bg-primary" v-model="text" filled mask="A"')
-            if i != 0: 
-                input_fields[i].disable()
-            else:
-                input_fields[0].props("autofocus")
+            input_fields[i].disable()
+
 
 highscores = {"player 1" : 100000, "player 2" : 72000, "player 3" : 10000, "player 4" : 190000}            
 def highscore_chart():
@@ -126,6 +126,8 @@ def initialize_game():
     game.reset_game()
     game.determine_rules()
     assign_req_letters()
+    input_fields[0].enable()
+    input_fields[0].props("autofocus")
     pass
 
 def assign_req_letters():
@@ -233,3 +235,16 @@ def toggle_dark_mode():
         ui.dark_mode().enable()
         theme.props("icon=dark_mode")
         is_dark_mode = True
+
+
+def timer_update():
+    global timer
+    timer.set_text(format_timer(game.get_time_elapsed() / (10 ** 9)))
+    if game.get_time_elapsed() < 0:
+        timer.set_text(format_timer(0))
+        game_end()
+
+
+def game_end():
+    for i in input_fields:
+        i.disable()
