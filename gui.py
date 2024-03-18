@@ -63,6 +63,7 @@ def init_gui():
         standard = ui.tab("Game")
         highscores = ui.tab("Highscores")
     with ui.tab_panels(tabs, value=standard).classes('w-full'):
+
         with ui.tab_panel(standard).classes("items-center"):
             start_game_button = ui.button("Start Game!", on_click=initialize_game).props('enter-active-class="animated fadeIn"')#.classes("transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300")
             main_game_area()
@@ -192,6 +193,7 @@ def enter(): # reset entire input state
             input_fields[2].set_value(game.get_letters()[2])
             input_fields[3].set_value(game.get_letters()[3])
             input_fields[4].set_value(game.get_letters()[4])
+            game.add_score(1)
             while pointer < 5 and input_fields[pointer].value != "":
                 input_fields[pointer].disable()
                 pointer += 1

@@ -31,6 +31,7 @@ class GameManager:
         self._word_rules = WordRules(self._req_word_length)
         self._gamemode = [True, False, False, False, False]
         self._time_limit = 15
+        self._score = 0
 
     def set_user_word(self, word: list[str]) -> None:
         '''
@@ -207,4 +208,7 @@ class GameManager:
         self._req_letters = ["", "", "", "", ""]
         self._gamemode = [True, False, False, False, False]
         self._word_rules.reset_prev_words()
+        self._score = 0
 
+    def add_score(self, amount: int):
+        self._score += amount
