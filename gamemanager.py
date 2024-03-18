@@ -30,7 +30,6 @@ class GameManager:
         self._time = time.monotonic_ns() # keeping track of time (in ns to avoid floating point errors), init to current time
         self._word_rules = WordRules(self._req_word_length)
         self._gamemode = [True, False, False, False, False]
-        self._indexes = []
 
     def set_user_word(self, word: list[str]) -> None:
         '''
@@ -63,7 +62,7 @@ class GameManager:
                 self._req_letters[index] = letter
                 valid.pop(index)
         else:
-            if self._gamemode[1]: # fist_last match enabled
+            if self._gamemode[1]: # first_last match enabled
                 self._req_letters[0] = self._word_rules.get_prev_word()[-1]
                 valid.pop(0)
 
@@ -119,48 +118,32 @@ class GameManager:
                     else:
                         good = True
 
+    def run_game(self) -> bool:
+        '''
+        To be used by the GUI in order to run a game based on whatever rules are 
+        set in self._gamemode.
+
+        Returns: True if all specified games run successfully and False otherwise
+        '''
+        results = True
+        if self._gamemode[0]:
+            results = results and self._word_rules.letter_match(self._req_letters)
+        if self._gamemode[1]:
+            results = results and self._word_rules.first_last_match(self._req_letters)
+        if self._gamemode[2]:
+            results = results and self._word_rules.random_letter_match(self._req_letters)
+        if self._gamemode[3]:
+            results = results and self._word_rules.no_duplicate_letters(self._req_letters)
+        if self._gamemode[4]:
+            results = results and self._word_rules.letter_match(self._req_letters)
+        return results
+
     def toggle_gamemode(self, control: int) -> None:
         '''
         Setter method for GUI to update the control variables that determine
         which game rules should be active 
         '''
         self._gamemode[control] = not self._gamemode[control]
-
-    
-    def game_letter_match(self) -> bool:
-        index = rand.randint(0, self._req_word_length-1)
-        
-        if self._word_rules.letter_match(self._req_letters, [index]):
-            return True
-        return False
-        
-    def game_first_last_match(self) -> bool:        
-        if self._word_rules.first_last_match(self._req_letters):
-            return True
-        return False
-        
-    def game_random_letter_match(self) -> bool:
-        index = rand.randint(0, self._req_word_length-1)
-        letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
-        
-        if self._word_rules.random_letter_match(self._req_letters, (index, letter)):
-            return True
-        return False
-        
-    def game_no_duplicate_letters(self) -> bool:        
-        if self._word_rules.no_duplicate_letters(self._req_letters):
-            return True
-        return False
-    
-    def game_multi_letter_match(self) -> bool:
-        amount = rand.randint(2, 4)
-        indexes = [0,1,2,3,4]
-        for i in range(amount):
-            indexes.pop(rand.randint(0, len(indexes)-1))
-        
-        if self._word_rules.letter_match(self._req_letters, [indexes]):
-            return True
-        return False
         
     def is_valid(self) -> bool:
         '''

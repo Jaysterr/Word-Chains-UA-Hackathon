@@ -25,5 +25,5 @@ def test_valid_words_letter_match():
 #test_valid_words_letter_match()
 
 game = GameManager()
-game.run_game()
-print('s')
+game.determine_rules()
+print('ran')
