@@ -66,6 +66,7 @@ def init_gui():
     with ui.tab_panels(tabs, value=standard).classes('w-full'):
 
         with ui.tab_panel(standard).classes("items-center"):
+            score_label = ui.label("Score: ")
             start_game_button = ui.button("Start Game!", on_click=initialize_game).props('enter-active-class="animated fadeIn"')#.classes("transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300")
             main_game_area()
 
@@ -99,6 +100,9 @@ def main_game_area():
     global timer
     with ui.circular_progress(show_value=False, value=time_limit, max=time_limit).props('size="6rem"') as timer_circle_display:
         timer = ui.label(time_limit).bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
+    timer = ui.label()
+    with ui.circular_progress(show_value=False, value=time_limit, max=time_limit).props('size="6rem" animation-speed="100"') as timer_circle_display:
+        ui.label(time_limit).bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
 
     #ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
     ui.timer(0.01, lambda: timer_update())
