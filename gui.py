@@ -92,9 +92,6 @@ def init_gui():
     ui.run(reload=True, native=True, window_size=(1000, 850))
     #ui.run(reload=False, port=native.find_open_port(), native=True, window_size=(1000, 850))
 
-def initialize_game():
-    pass
-
     
 def main_game_area():
     timer = ui.label()
