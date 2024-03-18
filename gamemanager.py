@@ -168,7 +168,7 @@ class GameManager:
         self._time = time.monotonic_ns()
 
 
-    def reset_game(self):
+    def reset_game(self) -> None:
         '''
         Resets the game
         '''
