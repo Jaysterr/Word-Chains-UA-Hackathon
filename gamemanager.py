@@ -55,6 +55,7 @@ class GameManager:
         # This needs to be rerun each round of the game
         # If we want this to work for other word lengths the line above should be tweaked all else works I think
         valid = [0, 1, 2, 3, 4]
+        future_letters = ["", "", "", "", ""]
         if self._word_rules.check_first_round(): # first round only random letter has rule in effect
             if self._gamemode[2]: # random letter
                 index = rand.randint(0, len(valid)-1)
@@ -64,9 +65,10 @@ class GameManager:
         else:
             if self._gamemode[1]: # first_last match enabled
                 future_letters = [self._req_letters[4], "", "", "", ""]
-
+                valid.pop(0)
             if self._gamemode[4]: # multi letter match enabled
                 possible_i = [i for i in valid]
+                print(possible_i)
                 keep_i = possible_i.pop(rand.randint(0, len(possible_i) - 1))
                 future_letters[keep_i] = self._req_letters[keep_i]
                 while (not self._word_rules.determine_if_possible(
@@ -124,7 +126,7 @@ class GameManager:
         Returns: True if all specified games run successfully and False otherwise
         '''
         results = True
-        future_letters = ["", "", "", "", ""]
+        #future_letters = ["", "", "", "", ""]
         if self._gamemode[0]:
             results = results and self._word_rules.letter_match(self._req_letters, [0,1,2,3,4])
         if self._gamemode[1]:
