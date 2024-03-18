@@ -29,7 +29,7 @@ class GameManager:
         self._req_word_length = 5  # can be changed for potential gamemodes with longer/shorter words
         self._time = None # keeping track of time (in ns to avoid floating point errors), init to None
         self._word_rules = WordRules(self._req_word_length)
-        self._gamemode = [True, False, False, False, False]
+        self._gamemode = [False, False, False, False, True]
         self._time_limit = 15
         self._score = 0
 
@@ -59,7 +59,7 @@ class GameManager:
         valid = [0, 1, 2, 3, 4]
         future_letters = ["", "", "", "", ""]
         if self._word_rules.check_first_round(): # first round only random letter has rule in effect
-            if self._gamemode[2]: # random letter
+            if self._gamemode[4]: # random letter
                 index = rand.randint(0, len(valid)-1)
                 letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
                 self._req_letters[index] = letter

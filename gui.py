@@ -79,11 +79,11 @@ def init_gui():
             ui.label("Game Rules").classes("text-h6")
         with ui.card_section().classes(""):
             with ui.row():        
-                ui.checkbox("Random Letter Match", value=True, on_change=lambda: game.toggle_gamemode(0))
+                #ui.checkbox("Random Letter Match" , on_change=lambda: game.toggle_gamemode(0))
                 ui.checkbox("First Last Match", on_change=lambda: game.toggle_gamemode(1))
-                ui.checkbox("No Duplicate Letters", on_change=lambda: game.toggle_gamemode(2))
-                ui.checkbox("Multi-Letter match", on_change=lambda: game.toggle_gamemode(3))
-                ui.checkbox("Game Letter Match", on_change=lambda: game.toggle_gamemode(4))
+                #ui.checkbox("No Duplicate Letters", on_change=lambda: game.toggle_gamemode(2))
+                #ui.checkbox("Multi-Letter match", on_change=lambda: game.toggle_gamemode(3))
+                ui.checkbox("Game Letter Match", value=True, on_change=lambda: game.toggle_gamemode(4))
 
             #ui.label().bind_text_from(SessionData, "active_game_rules", backward=lambda x: x.__str__())
     
@@ -98,11 +98,8 @@ def init_gui():
     
 def main_game_area():
     global timer
-    with ui.circular_progress(show_value=False, value=time_limit, max=time_limit).props('size="6rem"') as timer_circle_display:
-        timer = ui.label(time_limit).bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
-    timer = ui.label()
     with ui.circular_progress(show_value=False, value=time_limit, max=time_limit).props('size="6rem" animation-speed="100"') as timer_circle_display:
-        ui.label(time_limit).bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
+        timer = ui.label(time_limit).bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
 
     #ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
     ui.timer(0.01, lambda: timer_update())
@@ -185,11 +182,12 @@ def enter(): # reset entire input state
         print(game.check_word(), game._req_letters, game._word_rules.get_prev_words())
         print(pointer)
         print(temp)
-        if game.check_word()[0] and (not game.check_word()[1]):
+
+        if game.check_word()[0] and (not game.check_word()[1]) and game.run_game():
+            
             input_fields[0].enable()
             focus(input_fields[0])
             pointer = 0
-            game.run_game()
             game.determine_rules()
             input_fields[0].set_value(game.get_letters()[0])
             input_fields[1].set_value(game.get_letters()[1])
