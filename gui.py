@@ -105,7 +105,7 @@ def main_game_area():
     #ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
     ui.timer(0.01, lambda: timer_circle_display.set_value(game.get_time_elapsed() / (10**9)))
 
-    with ui.row(wrap=False).classes("w-1/2 justify-center"):
+    with ui.row(wrap=False).classes("w-2/3 justify-center"):
         for i in range(5):
             input_fields[i] = ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" standout="bg-primary" v-model="text" filled mask="A"')
             if i != 0: 
