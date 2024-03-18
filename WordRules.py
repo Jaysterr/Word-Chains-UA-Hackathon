@@ -11,6 +11,7 @@ game, and a no letter duplicates matching game.
 import string
 
 class WordRules:
+    
     def __init__(self, SIZE: int=5) -> None:
         '''
         Initialize the WordRules object. Creates attributes for the constant
@@ -21,6 +22,7 @@ class WordRules:
         Parameters: SIZE is a int constant representing the specified word 
         size of the game. It defaults to 5 if no constant is given.
         '''
+        self._active_rules = [False]*5
         self._SIZE = SIZE
         self._prev_words = []
         try:
@@ -33,7 +35,10 @@ class WordRules:
             self._word_list = [word.strip().lower() for word in file if len(word.strip()) == SIZE and string.punctuation not in word]
             file.close()
     
-    def contains_duplicate_word(self, letters: list[str]) -> bool: 
+    def toggle_active_rules(self, index: int):
+        self._active_rules[index] = not self._active_rules[index]
+        
+    def is_not_duplicate_word(self, letters: list[str]) -> bool: 
         '''
         This method is used to determine if a user word (in the form of a list)
         is a valid guess by comparing it against the rules. If the word is a new
@@ -145,7 +150,7 @@ class WordRules:
         Returns: True if the rule is upheld and the specified letters remained in the same 
         position and False otherwise. 
         '''
-        if self.contains_duplicate_word(letters):
+        if self.is_not_duplicate_word(letters):
             if self._prev_words == []:
                 self._prev_words.append("".join(letters))
                 return True
@@ -170,7 +175,7 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise. 
         '''
-        if self.contains_duplicate_word(letters):
+        if self.is_not_duplicate_word(letters):
             if self._prev_words == []:
                 self._prev_words.append("".join(letters))
                 return True
@@ -197,7 +202,7 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise. 
         '''
-        if self.contains_duplicate_word(letters):
+        if self.is_not_duplicate_word(letters):
             return True
         return False
 
@@ -211,7 +216,7 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise.
         '''
-        if self.contains_duplicate_word(letters):
+        if self.is_not_duplicate_word(letters):
             letter_set = set()
             for letter in letters:
                 letter_set.add(letter)
@@ -219,6 +224,18 @@ class WordRules:
                 self._prev_words.append("".join(letters))
                 return True
         return False
+    
+    
+    def matches_letters(self, letters: list[str], required: list[str]) -> bool:
+        '''
+        generic method that checks if the items of 'letters' match the non-empty items of 'required'
+        '''
+        for i in (range(len(letters))):
+            if required[i] == "":
+                continue
+            elif letters[i] != required[i]:
+                return False
+        return True
     
     def check_first_round(self):
         '''

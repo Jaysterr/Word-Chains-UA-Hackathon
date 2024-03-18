@@ -79,11 +79,11 @@ def init_gui():
             ui.label("Game Rules").classes("text-h6")
         with ui.card_section().classes(""):
             with ui.row():        
-                #ui.checkbox("Random Letter Match" , on_change=lambda: game.toggle_gamemode(0))
-                ui.checkbox("First Last Match", on_change=lambda: game.toggle_gamemode(1))
+                #ui.checkbox("Single Letter Match" , on_change=lambda: game.toggle_gamemode(0))
+                #ui.checkbox("Muti-Letter Match", value=True, on_change=lambda: game.toggle_gamemode(1))
+                ui.checkbox("First-Last Letter Match", value=True, on_change=lambda: game.toggle_gamemode(2))
                 #ui.checkbox("No Duplicate Letters", on_change=lambda: game.toggle_gamemode(2))
-                #ui.checkbox("Multi-Letter match", on_change=lambda: game.toggle_gamemode(3))
-                ui.checkbox("Game Letter Match", value=True, on_change=lambda: game.toggle_gamemode(4))
+                ui.checkbox("Multi-Letter match", on_change=lambda: game.toggle_gamemode(3))
 
             #ui.label().bind_text_from(SessionData, "active_game_rules", backward=lambda x: x.__str__())
     
@@ -125,7 +125,6 @@ def highscore_chart():
 
 def initialize_game():
     game.reset_game()
-    game.determine_rules()
     assign_req_letters()
     input_fields[0].enable()
     input_fields[0].props("autofocus")
@@ -174,27 +173,30 @@ def enter(): # reset entire input state
         full = full and i.value != ""
     if full:
 
-        word = ""
-        #for i in input_fields:
-            #word += i.value.lower()
+        # word = ""
+        # for i in input_fields:
+        #     word += i.value.lower()
         temp = [i for i in game.get_letters()]
-        game.set_user_word([i.value.lower() for i in input_fields])
-        print(game.check_word(), game._req_letters, game._word_rules.get_prev_words())
-        print(pointer)
-        print(temp)
-
-        if game.check_word()[0] and (not game.check_word()[1]) and game.run_game():
+        game.set_user_word([i.value.lower() for i in input_fields]) # input user word
+        # print(game.check_word(), game._req_letters, game._word_rules.get_prev_words())
+        # print(pointer)
+        # print(temp)
+        
+        did_win = game.run_game() # run game
+        
+        if did_win:
             
+            # if  won, reset text fields, so they're filled with required letters of next round
             input_fields[0].enable()
             focus(input_fields[0])
             pointer = 0
-            game.determine_rules()
             input_fields[0].set_value(game.get_letters()[0])
             input_fields[1].set_value(game.get_letters()[1])
             input_fields[2].set_value(game.get_letters()[2])
             input_fields[3].set_value(game.get_letters()[3])
             input_fields[4].set_value(game.get_letters()[4])
-            game.add_score(1)
+
+            # select first open text field
             while pointer < 5 and input_fields[pointer].value != "":
                 input_fields[pointer].disable()
                 pointer += 1
@@ -202,10 +204,9 @@ def enter(): # reset entire input state
                 input_fields[pointer].enable()
                 focus(input_fields[pointer])
         else:
-            game.set_user_word(temp)
             ui.notify("INVALID WORD")
     else:
-        ui.notify("INVALID WORD")
+        ui.notify("WORD TOO SHORT")
 
 def add_letter(key): # add key to input and move to next input 
     global pointer
@@ -238,15 +239,26 @@ def toggle_dark_mode():
         theme.props("icon=dark_mode")
         is_dark_mode = True
 
+def reset_text_fields():
+    for i in input_fields:
+        i.set_value("")
+        i.disable()
+    input_fields[0].enable()
+    focus(input_fields[0])
+    global pointer
+    pointer = 0
+
 
 def timer_update():
     global timer
     timer.set_text(format_timer(game.get_time_elapsed() / (10 ** 9)))
-    if game.get_time_elapsed() < 0:
+    if game.get_time_elapsed() <= 0:
         timer.set_text(format_timer(0))
         game_end()
 
 
 def game_end():
-    for i in input_fields:
-        i.disable()
+    global pointer
+    pointer = 0
+    game.reset_game()
+    reset_text_fields()
