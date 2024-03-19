@@ -64,7 +64,7 @@ class GameManager:
 
     def determine_rules(self):
         # This needs to be rerun each round of the game
-        # If we want this to work for other word lengths the line above should be tweaked all else works I think
+        # If we want this to work for other word lengths the line above should be tweaked 
         valid = [0, 1, 2, 3, 4]
         future_letters = ["", "", "", "", ""]
 
@@ -186,9 +186,6 @@ class GameManager:
             self.add_score(1)
             self.reset_time()
             self.determine_rules()
-        else:
-            # There is an repeate or invalid word in this case may want to print message
-            self.reset_game()
 
         return results
 
