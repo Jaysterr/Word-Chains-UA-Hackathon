@@ -9,6 +9,8 @@ game, and a no letter duplicates matching game.
 @authors: Jakob Garcia and Caroline Schwengler
 '''
 import string
+from roundresult import RoundResult
+import random as rand
 
 class WordRules:
     
@@ -22,9 +24,10 @@ class WordRules:
         Parameters: SIZE is a int constant representing the specified word 
         size of the game. It defaults to 5 if no constant is given.
         '''
-        self._active_rules = [False]*5
+        self._active_rules = [True, False, False, False, False] # Single Letter Match enabled by default
+        self._req_letters = ["", "", "", "", ""] # list of letters that must be present in word]
         self._SIZE = SIZE
-        self._prev_words = []
+        self._prev_words = [] # list of lists, each sublist representing the characters of a word
         try:
             # Open file of valid words
             file = open('words.txt')
@@ -34,7 +37,7 @@ class WordRules:
             # read the file and create list of valid words of specified length
             self._word_list = [word.strip().lower() for word in file if len(word.strip()) == SIZE and string.punctuation not in word]
             file.close()
-    
+        
     def toggle_active_rules(self, index: int):
         self._active_rules[index] = not self._active_rules[index]
         
@@ -48,8 +51,8 @@ class WordRules:
 
         Returns: True if the word is valid and False otherwise
         '''
-        word = "".join(letters).lower()
-        if word not in self._prev_words: # Previously guessed
+        # word = "".join(letters).lower()
+        if letters not in self._prev_words: # Previously guessed
             return True
         return False
     
@@ -76,7 +79,7 @@ class WordRules:
 
     def get_prev_words(self) -> list[str]:
         '''
-        Return whatever the previous word was
+        Return the list of previous words
         '''
         return self._prev_words
     
@@ -133,7 +136,7 @@ class WordRules:
                     if new_words != []:
                         possible_words = new_words
         # Account for words already used, and determine if there are still possible words
-        return len(set(possible_words) - set(self._prev_words)) != 0
+        return len(set(possible_words) - set(["".join(x) for x in self._prev_words])) != 0
 
 
     def letter_match(self, letters: list[str], indexes: list[int]) -> bool:
@@ -152,7 +155,7 @@ class WordRules:
         '''
         if self.is_not_duplicate_word(letters):
             if self._prev_words == []:
-                self._prev_words.append("".join(letters))
+                self._prev_words.append(letters)
                 return True
             
             prev_word = self._prev_words[-1]
@@ -163,7 +166,7 @@ class WordRules:
                 if prev_word[index] != letters[index]:
                     possible_valid = False
             if possible_valid:      
-                self._prev_words.append("".join(letters))
+                self._prev_words.append(letters)
                 return True
         return False
     
@@ -180,13 +183,13 @@ class WordRules:
         '''
         if self.is_not_duplicate_word(letters):
             if self._prev_words == []:
-                self._prev_words.append("".join(letters))
+                self._prev_words.append(letters)
                 return True
 
             prev_word = self._prev_words[-1]
 
             if prev_word[-1] == letters[0]:
-                    self._prev_words.append("".join(letters))
+                    self._prev_words.append(letters)
                     return True
         return False
 
@@ -235,35 +238,137 @@ class WordRules:
         return False"""
     
     
-    def matches_letters(self, letters: list[str], required: list[str]) -> bool:
+    def matches_letters(self, letters: list[str]) -> bool:
         '''
-        generic method that checks if the items of 'letters' match the non-empty items of 'required'
+        generic method that checks if the items of 'letters' match the non-empty items of 'req_letters'
+        Should only be run AFTER all other validation checks, including checking for duplicate letteers
         '''
         for i in (range(len(letters))):
-            if required[i] == "":
+            if self._req_letters[i] == "":
                 continue
-            elif letters[i] != required[i]:
+            elif letters[i] != self._req_letters[i]:
                 return False
-        self._prev_words.append("".join(letters))
+        self._prev_words.append(letters)
         return True
     
     
-    def process_word(input: list[str], rules: list[bool]):
+    def check_word(self, input: str):
+        '''
+        checks whether the given word is valid and follows all of the rules.
+        :return: a RoundResult enum
+        '''
+        is_valid = self.check_validity(input)
         
-        if rules[0]:
-            pass
-        if rules[1]:
-            pass
-        if rules[2]:
-            pass
-        if rules[3]:
-            pass
-        if rules[4]:
-            pass
+        if not is_valid[1]:
+            # Word was a repeat of a previous word
+            return RoundResult.REPEAT
 
-        pass
+        if not is_valid[0]: 
+            # word was not duplicate, but was invalid
+            return RoundResult.INVALID
+        
+        if self._active_rules[4] and not self.no_duplicate_letters(input):
+            return RoundResult.INVALID
+        
+        won_round = self.matches_letters(input)
+        
+        if (won_round):
+            return RoundResult.GOOD
+        else:
+            return RoundResult.INVALID
+
+    def check_validity(self, input: str) -> bool:
+        '''
+        checks the word in input
+        :return: a tuple formatted as:
+                    (is_valid(), is_repeat())
+                    (True, True) = accepted word
+                    (False, True) = invalid word
+                    (True, False) = repeat word
+                    (False, False) = repeat invalid word
+        '''
+        return (self.check_word_len(input) and self.contains_valid_word(input), \
+                self.is_not_duplicate_word(input))
     
     
+    def determine_rules(self):
+        # This method should only be run AFTER the user inputs their first word. And then every round after that
+        
+        # Pretty sure these are the current indexes of game rules
+        # single letter match - 0 
+        # multi letter match - 1 
+        # first last - 2 
+        # random letter - 3 
+        # no duplicates - 4
+
+        # If we want this to work for other word lengths the line above should be tweaked 
+        valid = [0, 1, 2, 3, 4]
+        future_letters = ["", "", "", "", ""]
+        
+        # FIRST-LAST MATCH
+        # This is run first to ensure it gets the first position, and can pop that position in 'valid'
+        if self._active_rules[2]:
+            future_letters = [self.get_prev_word()[-1], "", "", "", ""]
+            valid.pop(0)
+        
+        # MULTI-LETTER MATCH
+        if self._active_rules[1]: # multi letter match enabled
+            possible_i = [i for i in valid]
+            print(possible_i)
+            keep_i = possible_i.pop(rand.randint(0, len(possible_i) - 1))
+            future_letters[keep_i] = self.get_prev_word()[keep_i]
+            
+            while (not self.determine_if_possible(future_letters)) and len(possible_i) != 0:
+                print("sadu")
+                print(future_letters)
+                future_letters[keep_i] = ""
+                keep_i = possible_i.pop(rand.randint(0, len(possible_i) - 1))
+                future_letters[keep_i] = self.get_prev_word()[keep_i]
+                
+            if len(possible_i) == 0:
+                future_letters[keep_i] = ""  
+                
+        # SINGLE LETTER MATCH
+        # elif ensures this is only run if multi letter match was not enabled
+        elif self._active_rules[0] and not self._active_rules[1]: # letter match enabled
+            # Ensures letter match will not run if multi letter match is enabled
+            placed = False
+            while not placed:
+                found = valid.pop(rand.randint(0, len(valid)-1))
+                '''
+                if self._gamemode[4]: # no duplicate letters and valid
+                    if self._word_rules.get_prev_word()[found] in future_letters: # Would cause auto loss
+                        valid.append(found)
+                        continue        
+                '''        
+                future_letters[found] = self.get_prev_word()[found]
+                if self.determine_if_possible(future_letters): 
+                    placed = True # Break out of loop
+                else:
+                    future_letters[found] = ""
+                    valid.append(found) # purposely do not increment loop
+                    valid.sort()
+
+        # RANDOM LETTER MATCH
+        if self._active_rules[3]: 
+            index = rand.randint(0, len(valid)-1)
+            while index not in valid: # Valid should never be empty at this point
+                index = rand.randint(0, len(valid)-1) # Will get valid index
+            good = False
+            while not good:
+                letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
+                if self._active_rules[4]: # no duplicate letters and valid
+                    while letter in future_letters: 
+                        letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
+                future_letters[index] = letter
+                if not self.determine_if_possible(future_letters):
+                    future_letters[found] = ""
+                    valid.append(found) # purposely do not increment loop
+                    valid.sort()
+                else:
+                    good = True
+    
+        self._req_letters = future_letters
     
     def check_first_round(self):
         '''
@@ -276,3 +381,8 @@ class WordRules:
         For restarting the game. Resets the self._prev_words list
         '''
         self._prev_words = []
+    def reset_req_letters(self):
+        self._req_letters = ["", "", "", "", ""]
+        
+    def get_req_letters(self):
+        return self._req_letters

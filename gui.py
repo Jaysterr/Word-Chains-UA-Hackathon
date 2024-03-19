@@ -13,13 +13,9 @@ abs_file_path = os.path.join(script_dir, rel_path)
 class SessionData:
     active_game_rules = [False]*3
 
+checkboxes = [ui.checkbox]*5
 input_fields = [0]*5 # empty list with 5 slots
 pointer = 0
-check0 = ui.checkbox
-check1 = ui.checkbox
-check2 = ui.checkbox
-check3 = ui.checkbox
-check4 = ui.checkbox
 is_dark_mode = False
 timer = None
 theme = None # will contain day/night mode button
@@ -36,11 +32,8 @@ app.config.quasar_config['animations'] = [
 def init_gui():
     global theme
     global game
-    global check0
-    global check1
-    global check2
-    global check3
-    global check4
+    global checkboxes
+
     # configure color palette
     ui.colors(primary='#40798c', dark='#051923', secondary="#003554")
     ui.add_head_html(r'''
@@ -89,11 +82,11 @@ def init_gui():
             ui.label("Game Rules").classes("text-h6")
         with ui.card_section().classes(""):
             with ui.row():        
-                check0 = ui.checkbox("Single Letter Match (UNTESTED)" , value = True, on_change=lambda: game.toggle_gamemode(0))
-                check1 = ui.checkbox("Muti-Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(1))
-                check2 = ui.checkbox("First-Last Letter Match (TESTED)", on_change=lambda: game.toggle_gamemode(2))
-                check3 = ui.checkbox("Random Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(3))
-                check4 = ui.checkbox("No Duplicate Letters (UNTESTED)", on_change=lambda: game.toggle_gamemode(4))
+                checkboxes[0] = ui.checkbox("Single Letter Match (TESTED)" , value=True, on_change=lambda: game.toggle_gamemode(0))
+                checkboxes[1] = ui.checkbox("Muti-Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(1))
+                checkboxes[2] = ui.checkbox("First-Last Letter Match (TESTED)", on_change=lambda: game.toggle_gamemode(2))
+                checkboxes[3] = ui.checkbox("Random Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(3))
+                checkboxes[4] = ui.checkbox("No Duplicate Letters (UNTESTED)", on_change=lambda: game.toggle_gamemode(4))
 
             #ui.label().bind_text_from(SessionData, "active_game_rules", backward=lambda x: x.__str__())
     
@@ -169,11 +162,11 @@ def backspace(): # clear current input and move to previous input
             input_fields[pointer].set_value("")
             input_fields[pointer].disable()
         pointer -= 1
-        while pointer >= 0 and game._req_letters[pointer] != "":
+        while pointer >= 0 and game.get_req_letters()[pointer] != "":
             pointer -= 1
         if pointer < 0:
             pointer += 1
-            while game._req_letters[pointer] != "":
+            while game.get_req_letters()[pointer] != "":
                 pointer += 1
         input_fields[pointer].set_value("")
         input_fields[pointer].enable()
@@ -181,11 +174,7 @@ def backspace(): # clear current input and move to previous input
 
 def enter(): # reset entire input state
     global pointer
-    global check0
-    global check1
-    global check2
-    global check3
-    global check4
+    global checkboxes
     #print(game.check_word(), game._req_letters,
               #game._word_rules.get_prev_words())
     full = True
@@ -201,14 +190,14 @@ def enter(): # reset entire input state
         # print(pointer)
         # print(temp)
         
-        did_win = game.run_game() # run game
+        round_result = game.run_game([i.value.lower() for i in input_fields]) # run game
 
-        if did_win:
-            check0.disable()
-            check1.disable()
-            check2.disable()
-            check3.disable()
-            check4.disable()
+        if round_result is RoundResult.GOOD:
+            checkboxes[0].disable()
+            checkboxes[1].disable()
+            checkboxes[2].disable()
+            checkboxes[3].disable()
+            checkboxes[4].disable()
             # if won, update score, reset text fields, so they're filled with required letters of next round
             global score_display
             score_display.set_text("Score: " + str(game.get_score()))
@@ -228,12 +217,12 @@ def enter(): # reset entire input state
             if pointer <= 4:
                 input_fields[pointer].enable()
                 focus(input_fields[pointer])
+                
+        elif round_result is RoundResult.REPEAT:
+            ui.notify("GAME OVER:\n Reason: Repeated a word")
+            game_end()
         else:
-            if not game.check_word()[1]:
-                ui.notify("GAME OVER:\n Reason: Repeated a word")
-                game_end()
-            else:
-                ui.notify("INVALID WORD")
+            ui.notify("INVALID WORD")
     else:
         ui.notify("WORD TOO SHORT")
 
@@ -252,6 +241,7 @@ def add_letter(key): # add key to input and move to next input
         else:
             input_fields[pointer].set_value("")
 
+
 def focus(input_field) -> None:
     ui.run_javascript(f'getElement({input_field.id}).$refs.qRef.focus()')
 
@@ -267,6 +257,7 @@ def toggle_dark_mode():
         ui.dark_mode().enable()
         theme.props("icon=dark_mode")
         is_dark_mode = True
+
 
 def reset_text_fields():
     for i in input_fields:
@@ -284,22 +275,18 @@ def timer_update():
     if game.get_time_elapsed() / (10 ** 9) <= 0:
         timer.set_text(format_timer(0))
         game_end()
+        game.reset_game()
         ui.notify("GAME OVER:\n Reason: Ran out of time")
 
 
 def game_end():
     global pointer
-    global check0
-    global check1
-    global check2
-    global check3
-    global check4
-    check0.enable()
-    check1.enable()
-    check2.enable()
-    check3.enable()
-    check4.enable()
+    global checkboxes
+    checkboxes[0].enable()
+    checkboxes[1].enable()
+    checkboxes[2].enable()
+    checkboxes[3].enable()
+    checkboxes[4].enable()
     pointer = 0
-    game.reset_game()
     reset_text_fields()
     score_display.set_text("Score: " + str(game.get_score()))
