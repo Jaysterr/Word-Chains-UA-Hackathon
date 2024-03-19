@@ -256,7 +256,7 @@ def reset_text_fields():
 def timer_update():
     global timer
     timer.set_text(format_timer(game.get_time_elapsed() / (10 ** 9)))
-    if game.get_time_elapsed() <= 0:
+    if game.get_time_elapsed() / (10 ** 9) <= 0:
         timer.set_text(format_timer(0))
         game_end()
         ui.notify("GAME OVER:\n Reason: Ran out of time")
