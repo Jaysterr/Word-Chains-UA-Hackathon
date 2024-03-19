@@ -15,6 +15,11 @@ class SessionData:
 
 input_fields = [0]*5 # empty list with 5 slots
 pointer = 0
+check0 = ui.checkbox
+check1 = ui.checkbox
+check2 = ui.checkbox
+check3 = ui.checkbox
+check4 = ui.checkbox
 is_dark_mode = False
 timer = None
 theme = None # will contain day/night mode button
@@ -31,6 +36,11 @@ app.config.quasar_config['animations'] = [
 def init_gui():
     global theme
     global game
+    global check0
+    global check1
+    global check2
+    global check3
+    global check4
     # configure color palette
     ui.colors(primary='#40798c', dark='#051923', secondary="#003554")
     ui.add_head_html(r'''
@@ -79,11 +89,11 @@ def init_gui():
             ui.label("Game Rules").classes("text-h6")
         with ui.card_section().classes(""):
             with ui.row():        
-                ui.checkbox("Single Letter Match (UNTESTED)" , value = True, on_change=lambda: game.toggle_gamemode(0))
-                ui.checkbox("Muti-Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(1))
-                ui.checkbox("First-Last Letter Match (TESTED)", value=True, on_change=lambda: game.toggle_gamemode(2))
-                ui.checkbox("Random Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(3))
-                ui.checkbox("No Duplicate Letters (UNTESTED)", on_change=lambda: game.toggle_gamemode(4))
+                check0 = ui.checkbox("Single Letter Match (UNTESTED)" , value = True, on_change=lambda: game.toggle_gamemode(0))
+                check1 = ui.checkbox("Muti-Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(1))
+                check2 = ui.checkbox("First-Last Letter Match (TESTED)", value=True, on_change=lambda: game.toggle_gamemode(2))
+                check3 = ui.checkbox("Random Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(3))
+                check4 = ui.checkbox("No Duplicate Letters (UNTESTED)", on_change=lambda: game.toggle_gamemode(4))
 
             #ui.label().bind_text_from(SessionData, "active_game_rules", backward=lambda x: x.__str__())
     
@@ -171,11 +181,20 @@ def backspace(): # clear current input and move to previous input
 
 def enter(): # reset entire input state
     global pointer
+    global check0
+    global check1
+    global check2
+    global check3
+    global check4
     full = True
     for i in input_fields:
         full = full and i.value != ""
     if full:
-
+        check0.disable()
+        check1.disable()
+        check2.disable()
+        check3.disable()
+        check4.disable()
         # word = ""
         # for i in input_fields:
         #     word += i.value.lower()
@@ -269,6 +288,16 @@ def timer_update():
 
 def game_end():
     global pointer
+    global check0
+    global check1
+    global check2
+    global check3
+    global check4
+    check0.enable()
+    check1.enable()
+    check2.enable()
+    check3.enable()
+    check4.enable()
     pointer = 0
     game.reset_game()
     reset_text_fields()
