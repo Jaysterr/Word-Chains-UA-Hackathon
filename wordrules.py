@@ -108,15 +108,18 @@ class WordRules:
         Returns: True if there is a possible word and False otherwise
         '''
         possible_words = []
+        first_run = True
         # iterate through the users word
         for i in range(len(letters)):
             if letters[i] != '':
                 # if we have not found possible words based on the leading char yet, 
                 # determine possible words
-                if possible_words == []:
+                if possible_words == [] and first_run:
                     for word in self._word_list:
                         if word[i] == letters[i]:
                             possible_words.append(word)
+                elif possible_words == []:
+                    return False
                 else:
                     # If we do have possible words, filter out the words that don't match the other characters
                     j = 0
@@ -129,8 +132,10 @@ class WordRules:
                             new_words.append(possible_words[j])
 
                         j += 1
-                    if new_words != []:
-                        possible_words = new_words
+                    #if new_words != []:
+                    #    possible_words = new_words
+            first_run = False
+        print(possible_words)
         # Account for words already used, and determine if there are still possible words
         return len(set(possible_words) - set(["".join(x) for x in self._prev_words])) != 0
     
@@ -211,7 +216,11 @@ class WordRules:
         
         # MULTI-LETTER MATCH
         if self._active_rules[1]: # multi letter match enabled
-            amt_to_match = rand.randint(1, 3)
+            # This works on its own, need to test with others, does not account for if rule[4] enabled
+            if self._active_rules[3]:
+                amt_to_match = rand.randint(1, 2)
+            else:
+                amt_to_match = rand.randint(1, 3)
             possible_i = [i for i in valid]
             keep_i = possible_i.pop(rand.randint(0, len(possible_i) - 1))
             future_letters[keep_i] = self.get_prev_word()[keep_i]
@@ -225,45 +234,44 @@ class WordRules:
                     future_letters[keep_i] = ""
                     possible_i.append(keep_i)
                     amt_to_match += 1
+            valid = possible_i
                 
         # SINGLE LETTER MATCH
         # elif ensures this is only run if multi letter match was not enabled
         elif self._active_rules[0] and not self._active_rules[1]: # letter match enabled
-            # Ensures letter match will not run if multi letter match is enabled
             placed = False
             while not placed:
                 found = valid.pop(rand.randint(0, len(valid)-1))
-                '''
                 if self._gamemode[4]: # no duplicate letters and valid
                     if self._word_rules.get_prev_word()[found] in future_letters: # Would cause auto loss
                         valid.append(found)
-                        continue        
-                '''        
+                        continue   # Move to next iteration of loop to generate different letter        
                 future_letters[found] = self.get_prev_word()[found]
                 if self.determine_if_possible(future_letters): 
                     placed = True # Break out of loop
                 else:
                     future_letters[found] = ""
                     valid.append(found) # purposely do not increment loop
-                    valid.sort()
 
         # RANDOM LETTER MATCH
         if self._active_rules[3]: 
-            index = rand.randint(0, len(valid)-1)
-            while index not in valid: # Valid should never be empty at this point
-                index = rand.randint(0, len(valid)-1) # Will get valid index
             good = False
             while not good:
+                index = rand.randint(0, len(valid)-1)
+                while index not in valid: # Valid should never be empty at this point
+                    index = rand.randint(0, len(valid)-1) # Will get valid index
                 letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
                 if self._active_rules[4]: # no duplicate letters and valid
                     while letter in future_letters: 
                         letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
                 future_letters[index] = letter
+                print(future_letters)
                 if not self.determine_if_possible(future_letters):
-                    future_letters[found] = ""
-                    valid.append(found) # purposely do not increment loop
-                    valid.sort()
+                    future_letters[index] = ""
+                    #valid.append(index) # purposely do not increment loop
+                    #valid.sort()
                 else:
+                    valid.remove(index)
                     good = True
     
         self._req_letters = future_letters
