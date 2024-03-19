@@ -95,7 +95,7 @@ class GameManager:
                 '''        
                 future_letters[found] = self._word_rules.get_prev_word()[found]
                 if self._word_rules.determine_if_possible(future_letters): 
-                    placed = True
+                    placed = True # Break out of loop
                 else:
                     future_letters[found] = ""
                     valid.append(found) # purposely do not increment loop

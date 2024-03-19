@@ -157,11 +157,14 @@ class WordRules:
             
             prev_word = self._prev_words[-1]
 
+            possible_valid = True
             for index in indexes:
                 # Compare previous word to current word 
-                if prev_word[index] == letters[index]:
-                    self._prev_words.append("".join(letters))
-                    return True
+                if prev_word[index] != letters[index]:
+                    possible_valid = False
+            if possible_valid:      
+                self._prev_words.append("".join(letters))
+                return True
         return False
     
     def first_last_match(self, letters: list[str]) -> bool:
