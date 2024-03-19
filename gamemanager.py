@@ -259,3 +259,6 @@ class GameManager:
 
     def add_score(self, amount: int):
         self._score += amount
+
+    def get_score(self):
+        return self._score

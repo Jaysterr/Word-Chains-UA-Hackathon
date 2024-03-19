@@ -21,6 +21,7 @@ theme = None # will contain day/night mode button
 game = GameManager()
 time_limit = 15
 game.set_time_limit(time_limit)
+score_display = None
 
 app.config.quasar_config['animations'] = [
     'fadeOutDown'
@@ -66,8 +67,7 @@ def init_gui():
     with ui.tab_panels(tabs, value=standard).classes('w-full'):
 
         with ui.tab_panel(standard).classes("items-center"):
-            score_label = ui.label("Score: ")
-            start_game_button = ui.button("Start Game!", on_click=initialize_game).props('enter-active-class="animated fadeIn"')#.classes("transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300")
+            # start_game_button = ui.button("Start Game!", on_click=initialize_game).props('enter-active-class="animated fadeIn"')#.classes("transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300")
             main_game_area()
 
         with ui.tab_panel(highscores).classes('w-full'):
@@ -97,6 +97,8 @@ def init_gui():
 
     
 def main_game_area():
+    global score_display
+    score_display = ui.label("Score: 0").classes("font-extrabold text-xl")
     global timer
     with ui.circular_progress(show_value=False, value=time_limit, max=time_limit).props('size="6rem" animation-speed="100"') as timer_circle_display:
         timer = ui.label(time_limit).bind_text_from(timer_circle_display, 'value', backward=lambda x: (format_timer(x)))
@@ -104,7 +106,7 @@ def main_game_area():
     #ui.timer(0.001, lambda: timer.set_text(format_timer(game.get_time_elapsed() / (10**9))))
     ui.timer(0.01, lambda: timer_update())
     ui.timer(0.01, lambda: timer_circle_display.set_value(game.get_time_elapsed() / (10**9)))
-
+    
     with ui.row(wrap=False).classes("w-2/3 justify-center"):
         for i in range(5):
             input_fields[i] = ui.input().classes("w-1/6 text-2xl").props('input-class="text-center" standout="bg-primary" v-model="text" filled mask="A"')
@@ -120,7 +122,8 @@ def highscore_chart():
     'series': [
         {'type': 'bar', 'name': 'Alpha', 'data': list(highscores.values())},
     ],
-}))
+    }))
+    chart.add_resource
 
 
 def initialize_game():
@@ -186,7 +189,9 @@ def enter(): # reset entire input state
         
         if did_win:
             
-            # if  won, reset text fields, so they're filled with required letters of next round
+            # if won, update score, reset text fields, so they're filled with required letters of next round
+            global score_display
+            score_display.set_text("Score: " + str(game.get_score()))
             input_fields[0].enable()
             focus(input_fields[0])
             pointer = 0
@@ -267,3 +272,4 @@ def game_end():
     pointer = 0
     game.reset_game()
     reset_text_fields()
+    score_display.set_text("Score: " + str(game.get_score()))
