@@ -230,12 +230,12 @@ class GameManager:
         checks the word currently in self._req_letters
         :return: a tuple formatted as:
                     (is_valid(), is_repeat())
-                    (True, False) = accepted word
-                    (False, False) = invalid word
-                    (True, True) = repeat word
-                    (False, True) = repeat invalid word
+                    (True, True) = accepted word
+                    (False, True) = invalid word
+                    (True, False) = repeat word
+                    (False, False) = repeat invalid word
         '''
-        return (self.is_valid(), not self._word_rules.is_not_duplicate_word(self._req_letters))
+        return (self.is_valid(), self._word_rules.is_not_duplicate_word(self._req_letters))
 
     def set_time_limit(self, time_limit: int) -> None:
         self.time_limit = time_limit
