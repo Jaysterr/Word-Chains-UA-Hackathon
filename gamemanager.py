@@ -212,8 +212,7 @@ class GameManager:
         Returns: True if valid and False otherwise
         '''
         return self._word_rules.check_word_len(self._user_input) and \
-               self._word_rules.contains_valid_word(self._user_input) and \
-               self._word_rules.is_not_duplicate_word(self._user_input)
+               self._word_rules.contains_valid_word(self._user_input)
 
     def get_time_elapsed(self) -> int:
         '''
