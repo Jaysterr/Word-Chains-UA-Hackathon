@@ -69,22 +69,22 @@ class GameManager:
         future_letters = ["", "", "", "", ""]
 
         # SINGLE LETTER MATCH
-        # if self._gamemode[0] and not self._gamemode[1]: # letter match enabled
-        #     # Ensures letter match will not run if multi letter match is enabled
-        #     placed = False
-        #     while not placed:
-        #         found = valid.pop(rand.randint(0, len(valid)-1))
-        #         if self._gamemode[3]: # no duplicate letters and valid
-        #             if self._word_rules.get_prev_word()[found] in self._req_letters: # Would cause auto loss
-        #                 valid.append(found)
-        #                 continue                
-        #         self._req_letters[found] = self._word_rules.get_prev_word()[found]
-        #         if self._word_rules.determine_if_possible(self._req_letters): 
-        #             placed = True
-        #         else:
-        #             self._req_letters[found] = ""
-        #             valid.append(found) # purposely do not increment loop
-        #             valid.sort()
+        if self._gamemode[0] and not self._gamemode[1]: # letter match enabled
+            # Ensures letter match will not run if multi letter match is enabled
+            placed = False
+            while not placed:
+                found = valid.pop(rand.randint(0, len(valid)-1))
+                if self._gamemode[3]: # no duplicate letters and valid
+                    if self._word_rules.get_prev_word()[found] in future_letters: # Would cause auto loss
+                        valid.append(found)
+                        continue                
+                future_letters[found] = self._word_rules.get_prev_word()[found]
+                if self._word_rules.determine_if_possible(future_letters): 
+                    placed = True
+                else:
+                    future_letters[found] = ""
+                    valid.append(found) # purposely do not increment loop
+                    valid.sort()
         
         # MULTI-LETTER MATCH
         # if self._gamemode[1]: # multi letter match enabled
@@ -155,8 +155,8 @@ class GameManager:
         results = results and self._word_rules.matches_letters(self._user_input, self._req_letters)
         # future_letters = ["", "", "", "", ""]
         # SINGLE LETTER MATCH
-        # if self._gamemode[0]:
-        #     results = results and self._word_rules.letter_match(self._req_letters, [0,1,2,3,4])
+        if self._gamemode[0]:
+            results = results and self._word_rules.matches_letters(self._user_input, self._req_letters)
         # MULTI-LETTER MATCH
         # if self._gamemode[1]:
         #     results = results and self._word_rules.random_letter_match(self._req_letters, [0,1,2,3,4])
