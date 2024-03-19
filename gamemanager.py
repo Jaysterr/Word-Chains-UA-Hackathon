@@ -207,7 +207,7 @@ class GameManager:
         
     def is_valid(self) -> bool:
         '''
-        Determine if the user's word is valid based on the length, content, and whether it's a duplicate
+        Determine if the user's word is valid based on the length, and content
 
         Returns: True if valid and False otherwise
         '''
