@@ -1,12 +1,12 @@
 '''
-File: WordRules.py
+File: wordrules.py
 defines all the possible rules/restrictions for a word and different game modes.
 It is capable of checking if a word is valid and running 5 different games. 
 There is the base game of letter match (base and random version handled more by 
 the game manager), a first letter matching last letter game,a random letter matching 
 game, and a no letter duplicates matching game.
 
-@authors: Jakob Garcia and Caroline Schwengler
+@authors: Jakob Garcia, Caroline Schwengler, Jesse Oved
 '''
 import string
 from roundresult import RoundResult
@@ -252,7 +252,7 @@ class WordRules:
         return True
     
     
-    def check_word(self, input: str):
+    def check_word(self, input: str) -> RoundResult:
         '''
         checks whether the given word is valid and follows all of the rules.
         :return: a RoundResult enum
