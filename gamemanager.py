@@ -36,7 +36,7 @@ class GameManager:
         self._req_word_length = 5  # can be changed for potential gamemodes with longer/shorter words
         self._time = None # keeping track of time (in ns to avoid floating point errors), init to None
         self._word_rules = WordRules(self._req_word_length)
-        self._gamemode = [True, False, True, False, False] # First-Last match enabled by default
+        self._gamemode = [True, False, False, False, False] # First-Last match enabled by default
         self._time_limit = 15
         self._score = 0
 
@@ -196,7 +196,6 @@ class GameManager:
         #     if len(possible_i) == 0:
         #         future_letters[keep_i] = ""
         # self._req_letters = future_letter """
-        
         if results == True:
             self.add_score(1)
             self.reset_time()
@@ -220,7 +219,7 @@ class GameManager:
         Returns: True if valid and False otherwise
         '''
         return self._word_rules.check_word_len(self._user_input) and \
-               self._word_rules.contains_valid_word(self._user_input)
+               self._word_rules.contains_valid_word(self._user_input) and ((not self._gamemode[4]) or self._word_rules.no_duplicate_letters(self._user_input))
 
     def get_time_elapsed(self) -> int:
         '''

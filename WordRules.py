@@ -24,7 +24,7 @@ class WordRules:
         '''
         self._active_rules = [False]*5
         self._SIZE = SIZE
-        self._prev_words = ["     "]
+        self._prev_words = []
         try:
             # Open file of valid words
             file = open('words.txt')
@@ -48,7 +48,7 @@ class WordRules:
 
         Returns: True if the word is valid and False otherwise
         '''
-        word = "".join(letters).lower() 
+        word = "".join(letters).lower()
         if word not in self._prev_words: # Previously guessed
             return True
         return False
@@ -219,14 +219,20 @@ class WordRules:
 
         Returns: True if the rule is upheld and False otherwise.
         '''
-        if self.is_not_duplicate_word(letters):
+        duped = False
+        for i in range(len(letters) - 1):
+            if letters[i] in letters[i + 1:]:
+                duped = True
+        return not duped
+
+        """if self.is_not_duplicate_word(letters):
             letter_set = set()
             for letter in letters:
                 letter_set.add(letter)
             if len(letter_set) == self._SIZE:
                 self._prev_words.append("".join(letters))
                 return True
-        return False
+        return False"""
     
     
     def matches_letters(self, letters: list[str], required: list[str]) -> bool:
@@ -245,10 +251,10 @@ class WordRules:
         '''
         Get the list of previous words.
         '''
-        return self._prev_words == ["     "]
+        return self._prev_words == []
     
     def reset_prev_words(self):
         '''
         For restarting the game. Resets the self._prev_words list
         '''
-        self._prev_words = ["     "]
+        self._prev_words = []

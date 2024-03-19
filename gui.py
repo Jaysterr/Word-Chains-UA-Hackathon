@@ -91,7 +91,7 @@ def init_gui():
             with ui.row():        
                 check0 = ui.checkbox("Single Letter Match (UNTESTED)" , value = True, on_change=lambda: game.toggle_gamemode(0))
                 check1 = ui.checkbox("Muti-Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(1))
-                check2 = ui.checkbox("First-Last Letter Match (TESTED)", value=True, on_change=lambda: game.toggle_gamemode(2))
+                check2 = ui.checkbox("First-Last Letter Match (TESTED)", on_change=lambda: game.toggle_gamemode(2))
                 check3 = ui.checkbox("Random Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(3))
                 check4 = ui.checkbox("No Duplicate Letters (UNTESTED)", on_change=lambda: game.toggle_gamemode(4))
 
@@ -107,6 +107,8 @@ def init_gui():
 
     
 def main_game_area():
+    ui.timer(0.01, lambda: print(game.check_word(), game._req_letters,
+              game._word_rules.get_prev_words()))
     global score_display
     score_display = ui.label("Score: 0").classes("font-extrabold text-xl")
     global timer
@@ -190,24 +192,23 @@ def enter(): # reset entire input state
     for i in input_fields:
         full = full and i.value != ""
     if full:
-        check0.disable()
-        check1.disable()
-        check2.disable()
-        check3.disable()
-        check4.disable()
         # word = ""
         # for i in input_fields:
         #     word += i.value.lower()
         temp = [i for i in game.get_letters()]
         game.set_user_word([i.value.lower() for i in input_fields]) # input user word
-        # print(game.check_word(), game._req_letters, game._word_rules.get_prev_words())
+
         # print(pointer)
         # print(temp)
         
         did_win = game.run_game() # run game
-        
+
         if did_win:
-            
+            check0.disable()
+            check1.disable()
+            check2.disable()
+            check3.disable()
+            check4.disable()
             # if won, update score, reset text fields, so they're filled with required letters of next round
             global score_display
             score_display.set_text("Score: " + str(game.get_score()))
