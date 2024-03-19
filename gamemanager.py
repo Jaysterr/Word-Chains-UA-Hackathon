@@ -165,6 +165,13 @@ class GameManager:
             # word was not duplicate, but was invalid, so return false
             return False
         
+        # first round should always win, so prev word can be established for future rounds.
+        # if (self._word_rules.check_first_round()): 
+        #     self.add_score(1)
+        #     self.reset_time()
+        #     self.determine_rules()
+        #     return True
+        
         results = True
 
         results = results and self._word_rules.matches_letters(self._user_input, self._req_letters)
@@ -177,7 +184,7 @@ class GameManager:
         #     results = results and self._word_rules.random_letter_match(self._req_letters, [0,1,2,3,4])
         # FIRST-LAST LETTER MATCH
         if self._gamemode[2]:
-            results = results and self._word_rules.matches_letters(self._user_input, self._req_letters)
+            results = results and self._word_rules.first_last_match(self._user_input, self._req_letters)
             #future_letters = [self._req_letters[4], "", "", "", ""]
         # RANDOM LETTER MATCH
         # if self._gamemode[3]:

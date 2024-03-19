@@ -241,6 +241,24 @@ class WordRules:
         self._prev_words.append("".join(letters))
         return True
     
+    
+    def process_word(input: list[str], rules: list[bool]):
+        
+        if rules[0]:
+            pass
+        if rules[1]:
+            pass
+        if rules[2]:
+            pass
+        if rules[3]:
+            pass
+        if rules[4]:
+            pass
+
+        pass
+    
+    
+    
     def check_first_round(self):
         '''
         Get the list of previous words.
