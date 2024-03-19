@@ -107,8 +107,6 @@ def init_gui():
 
     
 def main_game_area():
-    ui.timer(0.01, lambda: print(game.check_word(), game._req_letters,
-              game._word_rules.get_prev_words()))
     global score_display
     score_display = ui.label("Score: 0").classes("font-extrabold text-xl")
     global timer
@@ -188,6 +186,8 @@ def enter(): # reset entire input state
     global check2
     global check3
     global check4
+    #print(game.check_word(), game._req_letters,
+              #game._word_rules.get_prev_words())
     full = True
     for i in input_fields:
         full = full and i.value != ""
