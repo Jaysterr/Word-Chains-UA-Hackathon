@@ -242,7 +242,7 @@ class WordRules:
         '''
         Get the list of previous words.
         '''
-        return self._prev_words == []
+        return self._prev_words == ["     "]
     
     def reset_prev_words(self):
         '''

@@ -204,7 +204,11 @@ def enter(): # reset entire input state
                 input_fields[pointer].enable()
                 focus(input_fields[pointer])
         else:
-            ui.notify("INVALID WORD")
+            if not game.check_word()[1]:
+                ui.notify("GAME OVER:\n Reason: Repeated a word")
+                game_end()
+            else:
+                ui.notify("INVALID WORD")
     else:
         ui.notify("WORD TOO SHORT")
 
@@ -255,6 +259,7 @@ def timer_update():
     if game.get_time_elapsed() <= 0:
         timer.set_text(format_timer(0))
         game_end()
+        ui.notify("GAME OVER:\n Reason: Ran out of time")
 
 
 def game_end():

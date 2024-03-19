@@ -146,11 +146,10 @@ class GameManager:
 
         Returns: True if all specified games run successfully and False otherwise
         '''
-        # First check if word is valid
         validity = self.check_word()
+        # First check if word is valid
         if not validity[1]:
-            # Word was duplicate, end game
-            self.reset_game()
+            # Word was duplicate, end game (gui handles it cause janky setup lol)
             return False
 
         if not validity[0]: 
@@ -235,7 +234,7 @@ class GameManager:
                     (True, False) = repeat word
                     (False, False) = repeat invalid word
         '''
-        return (self.is_valid(), self._word_rules.is_not_duplicate_word(self._req_letters))
+        return (self.is_valid(), self._word_rules.is_not_duplicate_word(self._user_input))
 
     def set_time_limit(self, time_limit: int) -> None:
         self.time_limit = time_limit
@@ -252,6 +251,7 @@ class GameManager:
         '''
         self._time = None
         self._req_letters = ["", "", "", "", ""]
+        self._user_input = ["", "", "", "", ""]
         # self._gamemode = [False, True, False, False, False]
         self.determine_rules()
         self._word_rules.reset_prev_words()
