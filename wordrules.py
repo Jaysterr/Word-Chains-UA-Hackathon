@@ -138,7 +138,7 @@ class WordRules:
     def matches_letters(self, letters: list[str]) -> bool:
         '''
         generic method that checks if the items of 'letters' match the non-empty items of 'req_letters'
-        Should only be run AFTER all other validation checks, including checking for duplicate letteers
+        Should only be run AFTER all other validation checks, including checking for duplicate letters
         '''
         for i in (range(len(letters))):
             if self._req_letters[i] == "":
@@ -164,8 +164,10 @@ class WordRules:
             # word was not duplicate, but was invalid
             return RoundResult.INVALID
         
-        if self._active_rules[4] and not self.no_duplicate_letters(input):
-            return RoundResult.INVALID
+        if self._active_rules[4]:
+            my_set = set(input)
+            if my_set.len() != 5:
+                return RoundResult.INVALID
         
         won_round = self.matches_letters(input)
         
@@ -198,7 +200,6 @@ class WordRules:
         # random letter - 3 
         # no duplicates - 4
 
-        # If we want this to work for other word lengths the line above should be tweaked 
         valid = [0, 1, 2, 3, 4]
         future_letters = ["", "", "", "", ""]
         
@@ -210,20 +211,20 @@ class WordRules:
         
         # MULTI-LETTER MATCH
         if self._active_rules[1]: # multi letter match enabled
+            amt_to_match = rand.randint(1, 3)
             possible_i = [i for i in valid]
-            print(possible_i)
             keep_i = possible_i.pop(rand.randint(0, len(possible_i) - 1))
             future_letters[keep_i] = self.get_prev_word()[keep_i]
+            amt_to_match -= 1
             
-            while (not self.determine_if_possible(future_letters)) and len(possible_i) != 0:
-                print("sadu")
-                print(future_letters)
-                future_letters[keep_i] = ""
+            while amt_to_match != 0:
                 keep_i = possible_i.pop(rand.randint(0, len(possible_i) - 1))
                 future_letters[keep_i] = self.get_prev_word()[keep_i]
-                
-            if len(possible_i) == 0:
-                future_letters[keep_i] = ""  
+                amt_to_match -= 1
+                if not self.determine_if_possible(future_letters):
+                    future_letters[keep_i] = ""
+                    possible_i.append(keep_i)
+                    amt_to_match += 1
                 
         # SINGLE LETTER MATCH
         # elif ensures this is only run if multi letter match was not enabled
