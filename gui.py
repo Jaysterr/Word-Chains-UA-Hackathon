@@ -79,11 +79,11 @@ def init_gui():
             ui.label("Game Rules").classes("text-h6")
         with ui.card_section().classes(""):
             with ui.row():        
-                ui.checkbox("Single Letter Match (UNTESTED)" , on_change=lambda: game.toggle_gamemode(0))
+                ui.checkbox("Single Letter Match (UNTESTED)" , value = True, on_change=lambda: game.toggle_gamemode(0))
                 ui.checkbox("Muti-Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(1))
                 ui.checkbox("First-Last Letter Match (TESTED)", value=True, on_change=lambda: game.toggle_gamemode(2))
-                ui.checkbox("No Duplicate Letters (UNTESTED)", on_change=lambda: game.toggle_gamemode(2))
-                ui.checkbox("Multi-Letter match (UNTESTED)", on_change=lambda: game.toggle_gamemode(3))
+                ui.checkbox("Random Letter Match (UNTESTED)", on_change=lambda: game.toggle_gamemode(3))
+                ui.checkbox("No Duplicate Letters (UNTESTED)", on_change=lambda: game.toggle_gamemode(4))
 
             #ui.label().bind_text_from(SessionData, "active_game_rules", backward=lambda x: x.__str__())
     
