@@ -30,6 +30,7 @@ from roundresult import RoundResult
 # TODO: Implement GameManager
 class GameManager:
 
+
     def __init__(self) -> None:
         self._user_input = ["", "", "", "", ""]
         self._req_letters = ["", "", "", "", ""]  # list of letters that must be present in word (?)
@@ -52,6 +53,7 @@ class GameManager:
         # for i in range(len(self._req_letters)):
         #     self._req_letters[i] = word[i]
 
+
     def get_letters(self) -> list[str]:
         '''
         A getter method for the GUI to use to determine what preset letters
@@ -61,6 +63,7 @@ class GameManager:
         determined by setting the rules.
         '''
         return self._word_rules.get_req_letters()
+
 
     def run_game(self, user_input: str) -> RoundResult:
         '''
@@ -86,8 +89,7 @@ class GameManager:
             return round_result
         else:
             return round_result
-            
-
+        
 
     def toggle_gamemode(self, control: int) -> None:
         '''
@@ -97,15 +99,7 @@ class GameManager:
         print("auigebew")
         self._word_rules.toggle_active_rules(control)
         
-    def is_valid(self) -> bool:
-        '''
-        Determine if the user's word is valid based on the length, and content
-
-        Returns: True if valid and False otherwise
-        '''
-        return self._word_rules.check_word_len(self._user_input) and \
-               self._word_rules.contains_valid_word(self._user_input) and ((not self._gamemode[4]) or self._word_rules.no_duplicate_letters(self._user_input))
-
+        
     def get_time_elapsed(self) -> int:
         '''
         Returns the current time on the timer
@@ -117,17 +111,6 @@ class GameManager:
             return 0
         return (self._time_limit * (10**9)) - (time.monotonic_ns() - self._time) # alt countdown timer
 
-    def check_word(self):
-        '''
-        checks the word currently in self._req_letters
-        :return: a tuple formatted as:
-                    (is_valid(), is_repeat())
-                    (True, True) = accepted word
-                    (False, True) = invalid word
-                    (True, False) = repeat word
-                    (False, False) = repeat invalid word
-        '''
-        return (self.is_valid(), self._word_rules.is_not_duplicate_word(self._user_input))
 
     def set_time_limit(self, time_limit: int) -> None:
         self.time_limit = time_limit
@@ -148,11 +131,14 @@ class GameManager:
         self._word_rules.reset_req_letters()
         self._score = 0
 
+
     def add_score(self, amount: int):
         self._score += amount
 
+
     def get_score(self):
         return self._score
+    
     
     def get_req_letters(self):
         return self._word_rules.get_req_letters()

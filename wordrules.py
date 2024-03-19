@@ -71,17 +71,13 @@ class WordRules:
             return True
         return False
 
+
     def get_prev_word(self) -> str:
         '''
         Return whatever the previous word was
         '''
         return self._prev_words[-1]
 
-    def get_prev_words(self) -> list[str]:
-        '''
-        Return the list of previous words
-        '''
-        return self._prev_words
     
     def check_word_len(self, letters: list[str]) -> bool:
         '''
@@ -137,105 +133,6 @@ class WordRules:
                         possible_words = new_words
         # Account for words already used, and determine if there are still possible words
         return len(set(possible_words) - set(["".join(x) for x in self._prev_words])) != 0
-
-
-    def letter_match(self, letters: list[str], indexes: list[int]) -> bool:
-        '''
-        This function provides a rule implementation and ensures that the rule 
-        was followed. It is an optional game mode. 
-        For this rule a specified number of letters must remain in the exact 
-        same position as it was in the previous word. These positions are determined
-        randomly by the game. 
-
-        Parameters: letters is a list of strings representing the new word inputted by the user
-        indexes is a list of integers that we will check for matches
-
-        Returns: True if the rule is upheld and the specified letters remained in the same 
-        position and False otherwise. 
-        '''
-        if self.is_not_duplicate_word(letters):
-            if self._prev_words == []:
-                self._prev_words.append(letters)
-                return True
-            
-            prev_word = self._prev_words[-1]
-
-            possible_valid = True
-            for index in indexes:
-                # Compare previous word to current word 
-                if prev_word[index] != letters[index]:
-                    possible_valid = False
-            if possible_valid:      
-                self._prev_words.append(letters)
-                return True
-        return False
-    
-    def first_last_match(self, letters: list[str]) -> bool:
-        '''
-        This function provides a rule implementation and ensures that the rule 
-        was followed. It is an optional game mode. 
-        For this rule the last letter of the previous word must match the first
-        letter of the new word.
-
-        Parameters: letters is a list of strings representing the new word inputted by the user
-
-        Returns: True if the rule is upheld and False otherwise. 
-        '''
-        if self.is_not_duplicate_word(letters):
-            if self._prev_words == []:
-                self._prev_words.append(letters)
-                return True
-
-            prev_word = self._prev_words[-1]
-
-            if prev_word[-1] == letters[0]:
-                    self._prev_words.append(letters)
-                    return True
-        return False
-
-    def random_letter_match(self, letters: list[str]) -> bool:
-        '''
-        This function provides a rule implementation and ensures that the rule 
-        was followed. It is an optional game mode. 
-        For this rule the game will randomly decide on a letter and an index. 
-        The user must generate a valid word containing the specified character 
-        at the specified index. 
-
-        Parameters: letters is a list of strings representing the new word inputted by the user
-        rand_info is a tuple containing two values. The first is an integer 
-        representing the index of the random letter and second is a string representing 
-        the character that must be in that position.
-
-        Returns: True if the rule is upheld and False otherwise. 
-        '''
-        if self.is_not_duplicate_word(letters):
-            return True
-        return False
-
-    def no_duplicate_letters(self, letters: list[str]) -> bool:
-        '''
-        This function provides a rule implementation and ensures that the rule 
-        was followed. It is an optional game mode. 
-        For this rule there cannot be any duplicate letters in the word.
-
-        Parameters: letters is a list of strings representing the new word inputted by the user
-
-        Returns: True if the rule is upheld and False otherwise.
-        '''
-        duped = False
-        for i in range(len(letters) - 1):
-            if letters[i] in letters[i + 1:]:
-                duped = True
-        return not duped
-
-        """if self.is_not_duplicate_word(letters):
-            letter_set = set()
-            for letter in letters:
-                letter_set.add(letter)
-            if len(letter_set) == self._SIZE:
-                self._prev_words.append("".join(letters))
-                return True
-        return False"""
     
     
     def matches_letters(self, letters: list[str]) -> bool:
@@ -370,18 +267,17 @@ class WordRules:
     
         self._req_letters = future_letters
     
-    def check_first_round(self):
-        '''
-        Get the list of previous words.
-        '''
-        return self._prev_words == []
     
     def reset_prev_words(self):
         '''
         For restarting the game. Resets the self._prev_words list
         '''
         self._prev_words = []
+        
     def reset_req_letters(self):
+        '''
+        For restarting the game. Resets the self._req_letters list
+        '''
         self._req_letters = ["", "", "", "", ""]
         
     def get_req_letters(self):
