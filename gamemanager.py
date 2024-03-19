@@ -147,7 +147,14 @@ class GameManager:
         Returns: True if all specified games run successfully and False otherwise
         '''
         # First check if word is valid
-        if not self.is_valid(): 
+        validity = self.check_word()
+        if not validity[1]:
+            # Word was duplicate, end game
+            self.reset_game()
+            return False
+
+        if not validity[0]: 
+            # word was not duplicate, but was invalid, so return false
             return False
         
         results = True
@@ -219,17 +226,17 @@ class GameManager:
             return 0
         return (self._time_limit * (10**9)) - (time.monotonic_ns() - self._time) # alt countdown timer
 
-    # def check_word(self) -> (bool, bool):
-    #     '''
-    #     checks the word currently in self._req_letters
-    #     :return: a tuple formatted as:
-    #                 (is_valid(), is_repeat())
-    #                 (True, False) = accepted word
-    #                 (False, False) = invalid word
-    #                 (True, True) = repeat word
-    #                 (False, True) = repeat invalid word
-    #     '''
-    #     return (self.is_valid(), not self._word_rules.is_not_duplicate_word(self._req_letters))
+    def check_word(self):
+        '''
+        checks the word currently in self._req_letters
+        :return: a tuple formatted as:
+                    (is_valid(), is_repeat())
+                    (True, False) = accepted word
+                    (False, False) = invalid word
+                    (True, True) = repeat word
+                    (False, True) = repeat invalid word
+        '''
+        return (self.is_valid(), not self._word_rules.is_not_duplicate_word(self._req_letters))
 
     def set_time_limit(self, time_limit: int) -> None:
         self.time_limit = time_limit
