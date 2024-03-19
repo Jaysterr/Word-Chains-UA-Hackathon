@@ -36,7 +36,7 @@ class GameManager:
         self._req_word_length = 5  # can be changed for potential gamemodes with longer/shorter words
         self._time = None # keeping track of time (in ns to avoid floating point errors), init to None
         self._word_rules = WordRules(self._req_word_length)
-        self._gamemode = [False, False, True, False, False] # First-Last match enabled by default
+        self._gamemode = [True, False, True, False, False] # First-Last match enabled by default
         self._time_limit = 15
         self._score = 0
 
@@ -63,10 +63,23 @@ class GameManager:
         return self._req_letters
 
     def determine_rules(self):
+        # Pretty sure these are the current indexes of game rules
+        # letter match - 0 
+        # multi letter match - 1 
+        # first last - 2 
+        # random letter - 3 
+        # no duplicates - 4
+
         # This needs to be rerun each round of the game
         # If we want this to work for other word lengths the line above should be tweaked 
         valid = [0, 1, 2, 3, 4]
         future_letters = ["", "", "", "", ""]
+
+        # FIRST-LAST MATCH
+        if self._gamemode[2]: # first_last match enabled
+            future_letters = [self._user_input[-1], "", "", "", ""]
+            # future_letters = [self._req_letters[4], "", "", "", ""]
+            valid.pop(0)
 
         # SINGLE LETTER MATCH
         if self._gamemode[0] and not self._gamemode[1]: # letter match enabled
@@ -74,10 +87,12 @@ class GameManager:
             placed = False
             while not placed:
                 found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._gamemode[3]: # no duplicate letters and valid
+                '''
+                if self._gamemode[4]: # no duplicate letters and valid
                     if self._word_rules.get_prev_word()[found] in future_letters: # Would cause auto loss
                         valid.append(found)
-                        continue                
+                        continue        
+                '''        
                 future_letters[found] = self._word_rules.get_prev_word()[found]
                 if self._word_rules.determine_if_possible(future_letters): 
                     placed = True
@@ -103,11 +118,7 @@ class GameManager:
         #     if len(possible_i) == 0:
         #         future_letters[keep_i] = ""
                 
-        # FIRST-LAST MATCH
-        if self._gamemode[2]: # first_last match enabled
-            future_letters = [self._user_input[-1], "", "", "", ""]
-            # future_letters = [self._req_letters[4], "", "", "", ""]
-            # valid.pop(0)
+    
         
         # RANDOM LETTER MATCH
         # if self._gamemode[3]: 
@@ -128,14 +139,12 @@ class GameManager:
         #         else:
         #             good = True
     
-        # if self._gamemode[3]: # random letter
+        # This was code to be run for the first iteration because only rand letter rule is in effect
+        # if self._gamemode[3]: # random letter 
         #     index = rand.randint(0, len(valid)-1)
         #     letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
         #     self._req_letters[index] = letter
         #     valid.pop(index)
-
-
-
 
         self._req_letters = future_letters
 
