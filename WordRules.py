@@ -24,7 +24,7 @@ class WordRules:
         '''
         self._active_rules = [False]*5
         self._SIZE = SIZE
-        self._prev_words = []
+        self._prev_words = ["     "]
         try:
             # Open file of valid words
             file = open('words.txt')
@@ -235,6 +235,7 @@ class WordRules:
                 continue
             elif letters[i] != required[i]:
                 return False
+        self._prev_words.append("".join(letters))
         return True
     
     def check_first_round(self):
@@ -247,4 +248,4 @@ class WordRules:
         '''
         For restarting the game. Resets the self._prev_words list
         '''
-        self._prev_words = []
+        self._prev_words = ["     "]
