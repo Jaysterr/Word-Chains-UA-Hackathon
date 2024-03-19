@@ -135,7 +135,7 @@ class WordRules:
                     #if new_words != []:
                     #    possible_words = new_words
             first_run = False
-        print(possible_words)
+        #print(possible_words)
         # Account for words already used, and determine if there are still possible words
         return len(set(possible_words) - set(["".join(x) for x in self._prev_words])) != 0
     
@@ -255,6 +255,7 @@ class WordRules:
 
         # RANDOM LETTER MATCH
         if self._active_rules[3]: 
+            # Working but is not yet accounting for is rule[4] is enabled
             good = False
             while not good:
                 index = rand.randint(0, len(valid)-1)
@@ -265,11 +266,8 @@ class WordRules:
                     while letter in future_letters: 
                         letter = rand.choice("abcdefghijklmnopqrstuvwxyz")
                 future_letters[index] = letter
-                print(future_letters)
                 if not self.determine_if_possible(future_letters):
                     future_letters[index] = ""
-                    #valid.append(index) # purposely do not increment loop
-                    #valid.sort()
                 else:
                     valid.remove(index)
                     good = True
