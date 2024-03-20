@@ -139,6 +139,16 @@ class WordRules:
         # Account for words already used, and determine if there are still possible words
         return len(set(possible_words) - set(["".join(x) for x in self._prev_words])) != 0
     
+    def duplicate_letters(letters: list[str]) -> bool:
+        '''
+        checks whether the input list 'letters' has any repeating letters in it.
+        Parameters: letters - list of characters representing a word
+        Returns: True if there are duplicate letters, False otherwise
+        '''
+        for i in range(len(letters)):
+            if letters[i] in letters[i+1:]:
+                return True
+        return False
     
     def matches_letters(self, letters: list[str]) -> bool:
         '''
@@ -171,7 +181,7 @@ class WordRules:
         
         if self._active_rules[4]:
             my_set = set(input)
-            if my_set.len() != 5:
+            if len(my_set) != 5:
                 return RoundResult.INVALID
         
         won_round = self.matches_letters(input)
@@ -209,7 +219,7 @@ class WordRules:
         future_letters = ["", "", "", "", ""]
         
         # FIRST-LAST MATCH
-        # This is run first to ensure it gets the first position, and can pop that position in 'valid'
+        # This is run first to ensure it gets the first position, and can pop that position from 'valid'
         if self._active_rules[2]:
             future_letters = [self.get_prev_word()[-1], "", "", "", ""]
             valid.pop(0)
@@ -242,8 +252,8 @@ class WordRules:
             placed = False
             while not placed:
                 found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._gamemode[4]: # no duplicate letters and valid
-                    if self._word_rules.get_prev_word()[found] in future_letters: # Would cause auto loss
+                if self._active_rules[4]: # no duplicate letters and valid
+                    if self.get_prev_word()[found] in future_letters: # Would cause auto loss
                         valid.append(found)
                         continue   # Move to next iteration of loop to generate different letter        
                 future_letters[found] = self.get_prev_word()[found]
