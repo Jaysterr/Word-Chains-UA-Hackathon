@@ -134,8 +134,7 @@ class WordRules:
                         j += 1
                     #if new_words != []:
                     #    possible_words = new_words
-            first_run = False
-        #print(possible_words)
+                first_run = False
         # Account for words already used, and determine if there are still possible words
         return len(set(possible_words) - set(["".join(x) for x in self._prev_words])) != 0
     
@@ -251,11 +250,12 @@ class WordRules:
         elif self._active_rules[0] and not self._active_rules[1]: # letter match enabled
             placed = False
             while not placed:
-                found = valid.pop(rand.randint(0, len(valid)-1))
-                if self._active_rules[4]: # no duplicate letters and valid
-                    if self.get_prev_word()[found] in future_letters: # Would cause auto loss
-                        valid.append(found)
-                        continue   # Move to next iteration of loop to generate different letter        
+                popindex = rand.randint(0, len(valid)-1)
+                found = valid.pop(popindex)
+                # if self._active_rules[4]: # no duplicate letters and valid
+                #     if self.get_prev_word()[found] in future_letters: # Would cause auto loss
+                #         valid.append(found)
+                #         continue   # Move to next iteration of loop to generate different letter
                 future_letters[found] = self.get_prev_word()[found]
                 if self.determine_if_possible(future_letters): 
                     placed = True # Break out of loop

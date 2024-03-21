@@ -26,6 +26,7 @@ import time
 import random as rand
 from wordrules import *
 from roundresult import RoundResult
+import json
 
 # TODO: Implement GameManager
 class GameManager:
@@ -38,8 +39,10 @@ class GameManager:
         self._time = None # keeping track of time (in ns to avoid floating point errors), init to None
         self._word_rules = WordRules(self._req_word_length)
         self._gamemode = [True, False, False, False, False] # First-Last match enabled by default
-        self._time_limit = 15
+        self._time_limit = 10
         self._score = 0
+        with open('data.json', 'r') as datafile: 
+            self._persistent_data = json.loads(datafile.read())
 
     
     def set_user_word(self, word: list[str]) -> None:
@@ -78,12 +81,12 @@ class GameManager:
         
         if round_result is RoundResult.REPEAT:
             # Word was duplicate, end game
-            # TODO
             self.reset_game()
             return round_result
         
         if round_result is RoundResult.GOOD:
-            self.add_score(1)
+            self.increment_score()
+            self.update_highscore()
             self.reset_time()
             self._word_rules.determine_rules()
             return round_result
@@ -96,7 +99,6 @@ class GameManager:
         Setter method for GUI to update the control variables that determine
         which game rules should be active 
         '''
-        print("auigebew")
         self._word_rules.toggle_active_rules(control)
         
         
@@ -104,12 +106,12 @@ class GameManager:
         '''
         Returns the current time on the timer
         '''
-        #return time.monotonic_ns() - self._time # count up timer
         if self._time == None:
             return self._time_limit * (10**9)
         elif (self._time_limit * (10**9)) - (time.monotonic_ns() - self._time) < 0:
+            self.reset_game()
             return 0
-        return (self._time_limit * (10**9)) - (time.monotonic_ns() - self._time) # alt countdown timer
+        return (self._time_limit * (10**9)) - (time.monotonic_ns() - self._time) # countdown timer
 
 
     def set_time_limit(self, time_limit: int) -> None:
@@ -123,7 +125,7 @@ class GameManager:
         
     def reset_game(self) -> None: # reset and/or initialize the game
         '''
-        Resets the game
+        Resets the game, if player got a highscore then it updates the _highest_score attribute
         '''
         self._time = None
         self._user_input = ["", "", "", "", ""]
@@ -132,13 +134,40 @@ class GameManager:
         self._score = 0
 
 
-    def add_score(self, amount: int):
-        self._score += amount
+    def update_highscore(self):
+        '''
+        updates highscore and caches it. You better not be manually editing the data.json file :(
+        '''
+        if (self._persistent_data['highscore'] < self._score):
+            self._persistent_data['highscore'] = self._score
+            with open('data.json', 'w') as datafile:
+                datafile.write(json.dumps(self._persistent_data))
 
+
+    def increment_score(self):
+        score_increment = 0
+        rules = self._word_rules._active_rules
+        if rules[0] == True:
+            score_increment += 1
+        elif rules[1] == True:
+            score_increment += 1
+        if rules[2] == True:
+            score_increment += 1
+        if rules[3] == True:
+            score_increment += 1
+        if rules[4] == True:
+            score_increment += 1
+        self._score += score_increment
 
     def get_score(self):
         return self._score
     
+    def get_highscore(self):
+        
+        return self._persistent_data['highscore']
     
     def get_req_letters(self):
         return self._word_rules.get_req_letters()
+    
+    def get_time_limit(self):
+        return self._time_limit
