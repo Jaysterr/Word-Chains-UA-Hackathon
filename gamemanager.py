@@ -18,6 +18,11 @@ import random as rand
 from wordrules import *
 from roundresult import RoundResult
 import json
+import os
+
+script_dir = os.path.dirname(__file__)
+rel_path = "data/data.json"
+how_to_play_path = os.path.join(script_dir, rel_path)
 
 # TODO: Implement GameManager
 class GameManager:
@@ -32,7 +37,7 @@ class GameManager:
         self._gamemode = [True, False, False, False, False] # First-Last match enabled by default
         self._time_limit = 10
         self._score = 0
-        with open('data.json', 'r') as datafile: 
+        with open(how_to_play_path, 'r') as datafile: 
             self._persistent_data = json.loads(datafile.read())
 
     
@@ -131,7 +136,7 @@ class GameManager:
         '''
         if (self._persistent_data['highscore'] < self._score):
             self._persistent_data['highscore'] = self._score
-            with open('data.json', 'w') as datafile:
+            with open(how_to_play_path, 'w') as datafile:
                 datafile.write(json.dumps(self._persistent_data))
 
 

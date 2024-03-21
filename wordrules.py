@@ -12,6 +12,11 @@ Primary authors: Jakob Garcia, Caroline Schwengler
 import string
 from roundresult import RoundResult
 import random as rand
+import os
+
+script_dir = os.path.dirname(__file__)
+rel_path = "data/words.txt"
+how_to_play_path = os.path.join(script_dir, rel_path)
 
 class WordRules:
     
@@ -31,7 +36,7 @@ class WordRules:
         self._prev_words = [] # list of lists, each sublist representing the characters of a word
         try:
             # Open file of valid words
-            file = open('words.txt')
+            file = open(how_to_play_path, 'r')
         except FileNotFoundError:
             print('ERROR: File not found')
         else:

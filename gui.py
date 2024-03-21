@@ -12,8 +12,8 @@ from gamemanager import GameManager
 import os
 
 script_dir = os.path.dirname(__file__)
-rel_path = "how2play.md"
-abs_file_path = os.path.join(script_dir, rel_path)
+rel_path = "data/how2play.md"
+how_to_play_path = os.path.join(script_dir, rel_path)
 
 
 checkboxes = [ui.checkbox]*5
@@ -44,7 +44,7 @@ def init_gui():
     with ui.header(elevated=True).props("text-center"):
         with ui.row().classes("w-full items-center items-stretch"):
             with ui.dialog() as dialog, ui.card().classes("items-center"):
-                with open(abs_file_path) as file:
+                with open(how_to_play_path) as file:
                     ui.markdown(file.read())
                 ui.button('Close', on_click=dialog.close)
             

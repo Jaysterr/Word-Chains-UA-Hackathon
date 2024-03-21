@@ -11,7 +11,7 @@
 A valid word is:
 
 1. **A real, english word**
-2. A unique word, **NO REPEATING WORDS OR IT"S GAME OVER**
+2. A unique word, **NO REPEATING WORDS OR IT'S GAME OVER**
 3. **A word that follows the rules set at the beginning of the game**
 
 #### Possible Rules
