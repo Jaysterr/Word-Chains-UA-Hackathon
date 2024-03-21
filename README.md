@@ -1,6 +1,6 @@
 # "Word Chains": UA Hackathon Project
 
-A simple little game where you need to type in words as quickly as you can, given various rules restricting what words you can use
+A game where you need to type in words as quickly as you can, given various rules restricting what words you can use
 Authors:
 Jesse Oved
 Soren Abrams
