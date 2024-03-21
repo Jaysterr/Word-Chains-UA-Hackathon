@@ -6,7 +6,8 @@ There is the base game of letter match (base and random version handled more by
 the game manager), a first letter matching last letter game,a random letter matching 
 game, and a no letter duplicates matching game.
 
-@authors: Jakob Garcia, Caroline Schwengler, Jesse Oved
+@authors: Jakob Garcia, Caroline Schwengler, Jesse Oved, Soren Abrams
+Primary authors: Jakob Garcia, Caroline Schwengler
 '''
 import string
 from roundresult import RoundResult

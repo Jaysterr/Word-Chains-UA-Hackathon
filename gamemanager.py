@@ -1,26 +1,17 @@
 '''
 File: gamemanager.py
 A manager for the game that handles all of the games logic. It interacts 
-directly with the WordRules class and the GUI for the game. The logic of the game 
+directly with the WordRules class and the GUI for the game. The flow of the game 
 would run as follows:
 
 1. toggle the gamemodes (toggle_gamemode())
-2. determine the rules of the current game (determine_rules())
-    - this sets self._req_letters to the required letters for this round
-3. Get the current template the user must fill in (get_letters())
-4. set the users word into self._user_input (set_user_word())
-5. determine if the user's word is valid (is_valid())
-6. Run the games and get a boolean value back. True means the game was successful
-so continue onto the next game (GUI repeats this list from 2). False means the word
-was repeated and so the game should end (run_game())
-7. If the game is reset, call the reset game method (reset_game()).
+2. gui calls run_game(), gamemanager calls corresponding methods in word_rules, which handles most of the logic,
+wordrules returns a RoundResult enum, which is then passed to the GUI so everything can update accordingly.
+3. repeat 2. until game over
+4. reset_game() is called.
 
-toggle gamemodes
-get required word from game
-input user word
-run game
-
-@authors: Jakob Garcia, Caroline Schwengler, Jesse Oved
+@authors: Jakob Garcia, Caroline Schwengler, Jesse Oved, Soren Abrams
+Primary authors: Jakob Garcia, Caroline Schwengler
 '''
 import time
 import random as rand

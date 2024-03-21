@@ -1,3 +1,10 @@
+'''
+File: gui.py
+This is a view manager for the game, contains all the code for the GUI
+
+@authors: Jakob Garcia, Caroline Schwengler, Jesse Oved, Soren Abrams
+Primary authors: Jesse Oved, Soren Abrams
+'''
 from nicegui import ui, app, native
 from gamemanager import *
 from nicegui.events import *
