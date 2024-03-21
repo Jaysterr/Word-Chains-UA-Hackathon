@@ -30,11 +30,9 @@ class GameManager:
 
     def __init__(self) -> None:
         self._user_input = ["", "", "", "", ""]
-        self._req_letters = ["", "", "", "", ""]  # list of letters that must be present in word (?)
         self._req_word_length = 5  # can be changed for potential gamemodes with longer/shorter words
         self._time = None # keeping track of time (in ns to avoid floating point errors), init to None
         self._word_rules = WordRules(self._req_word_length)
-        self._gamemode = [True, False, False, False, False] # First-Last match enabled by default
         self._time_limit = 10
         self._score = 0
         with open(how_to_play_path, 'r') as datafile: 
