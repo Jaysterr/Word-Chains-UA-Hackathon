@@ -219,12 +219,12 @@ def enter(): # reset entire input state
                 focus(input_fields[pointer])
                 
         elif round_result is RoundResult.REPEAT:
-            ui.notify("GAME OVER:\n Reason: Repeated a word")
+            ui.notify("GAME OVER:\n Reason: Repeated a word", type='negative')
             game_end()
         else:
-            ui.notify("INVALID WORD")
+            ui.notify("INVALID WORD", type='warning')
     else:
-        ui.notify("WORD TOO SHORT")
+        ui.notify("WORD TOO SHORT", type='warning')
 
 def add_letter(key): # add key to input and move to next input 
     global pointer
@@ -276,7 +276,7 @@ def timer_update():
         timer.set_text(format_timer(0))
         game_end()
         game.reset_game()
-        ui.notify("GAME OVER:\n Reason: Ran out of time")
+        ui.notify("GAME OVER:\n Reason: Ran out of time", type='negative')
 
 
 def game_end():
