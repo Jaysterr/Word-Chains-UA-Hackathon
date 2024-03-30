@@ -77,7 +77,7 @@ def init_gui():
                 # checkboxes[4] = ui.checkbox("No Duplicate Letters (UNTESTED)", on_change=lambda: game.toggle_gamemode(4))    
     
     # RUN GUI
-    ui.run(window_size=(1000, 750))
+    ui.run(native=False, on_air='yYMC2uYoKa71WBMN')
 
     # This is the UI content of the main gameplay screen
 def main_game_area():
